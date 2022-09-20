@@ -1,47 +1,45 @@
 package com.parvin.counterpoint;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-/**
- * TODO
- * @author dparvin
- *
- */
-public class ReportsGenerator {
+import com.parvin.counterpoint.events.IntervalEvent;
+import com.parvin.counterpoint.events.Motion;
+import com.parvin.counterpoint.events.MotionEvent;
+import com.parvin.counterpoint.events.NoteOnEvent;
+
+public class Analyzer {
 	private Track[] tracks;
 	
-	/**
-	 * TODO
-	 * @param tracks
-	 */
-	public ReportsGenerator(Track[] tracks) {
-		this.tracks = tracks;
+	public Analyzer(File midiFile) throws InvalidMidiDataException, IOException {
+		Sequence midiSequence = MidiSystem.getSequence(midiFile);
+		tracks = midiSequence.getTracks();
 	}
 	
-	/**
-	 * TODO
-	 * @return
-	 */
-	public List<Report> generateReports() {
-		List<Report> contrapuntalMotionReports = new ArrayList<>();
+	public List<Analysis> analyze() {
+		List<Analysis> analyses = new ArrayList<>();
 		if (tracks.length < 2) {
-			return contrapuntalMotionReports;
+			return analyses;
 		}
 		
 		for (int track = 0; track < tracks.length; track++) {
 			for (int comparisonTrack = track + 1; comparisonTrack < tracks.length; comparisonTrack++) {
 				List<MotionEvent> motionEvents = getMotionEvents(tracks[track], tracks[comparisonTrack]);
-				contrapuntalMotionReports.add(new Report(track, comparisonTrack, motionEvents));
+				analyses.add(new Analysis(track, comparisonTrack, motionEvents));
 			}
 		}
 		
-		return contrapuntalMotionReports;
+		return analyses;
 	}
 
 	private List<NoteOnEvent> getNoteOnEvents(Track track) {
