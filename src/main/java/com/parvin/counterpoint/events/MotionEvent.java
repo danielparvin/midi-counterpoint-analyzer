@@ -1,23 +1,23 @@
 package com.parvin.counterpoint.events;
 
 /**
- * Represents a {@link Motion} occurring at a specific time.
+ * Represents a {@link ContrapuntalMotion} occurring at a specific time.
  * @author dparvin
  */
 public class MotionEvent {
-	private Motion motion;
+	private ContrapuntalMotion motion;
 	private long tick;
 	
-	public MotionEvent(Motion motion, long tick) {
+	public MotionEvent(ContrapuntalMotion motion, long tick) {
 		this.motion = motion;
 		this.tick = tick;
 	}
 
-	public Motion getMotion() {
+	public ContrapuntalMotion getMotion() {
 		return motion;
 	}
 
-	public void setMotion(Motion motion) {
+	public void setMotion(ContrapuntalMotion motion) {
 		this.motion = motion;
 	}
 

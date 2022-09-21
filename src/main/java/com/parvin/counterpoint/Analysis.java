@@ -3,7 +3,7 @@ package com.parvin.counterpoint;
 import java.util.Collections;
 import java.util.List;
 
-import com.parvin.counterpoint.events.Motion;
+import com.parvin.counterpoint.events.ContrapuntalMotion;
 import com.parvin.counterpoint.events.MotionEvent;
 
 /**
@@ -11,6 +11,7 @@ import com.parvin.counterpoint.events.MotionEvent;
  * @author dparvin
  */
 public class Analysis {
+	private String filename; // TODO Record the name of the MIDI file related to this analysis.
 	private int trackNumber;
 	private int comparisonTrackNumber;
 	private List<MotionEvent> motionEvents;
@@ -53,15 +54,15 @@ public class Analysis {
 	
 	private long countContraryMotionEvents() {
 		return motionEvents.stream()
-				.filter(event -> event.getMotion() == Motion.CONTRARY)
+				.filter(event -> event.getMotion() == ContrapuntalMotion.CONTRARY)
 				.count();
 	}
 
 	private long countSimilarAndParallelMotionEvents() {
 		return motionEvents.stream()
 				.filter(
-						event -> event.getMotion() == Motion.PARALLEL
-						|| event.getMotion() == Motion.SIMILAR)
+						event -> event.getMotion() == ContrapuntalMotion.PARALLEL
+						|| event.getMotion() == ContrapuntalMotion.SIMILAR)
 				.count();
 	}
 }

@@ -14,9 +14,11 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import com.parvin.counterpoint.events.IntervalEvent;
-import com.parvin.counterpoint.events.Motion;
+import com.parvin.counterpoint.events.ContrapuntalMotion;
 import com.parvin.counterpoint.events.MotionEvent;
 import com.parvin.counterpoint.events.NoteOnEvent;
+
+import static com.parvin.counterpoint.events.ContrapuntalMotion.*;
 
 public class Analyzer {
 	private Track[] tracks;
@@ -32,10 +34,11 @@ public class Analyzer {
 			return analyses;
 		}
 		
-		for (int track = 0; track < tracks.length; track++) {
-			for (int comparisonTrack = track + 1; comparisonTrack < tracks.length; comparisonTrack++) {
-				List<MotionEvent> motionEvents = getMotionEvents(tracks[track], tracks[comparisonTrack]);
-				analyses.add(new Analysis(track, comparisonTrack, motionEvents));
+		// Compare each track to each other (e.g. 0:1, 0:2, 0:3, 1:2, 1:3, 2:3 for four tracks).
+		for (int trackNum = 0; trackNum < tracks.length; trackNum++) {
+			for (int comparisonTrackNum = trackNum + 1; comparisonTrackNum < tracks.length; comparisonTrackNum++) {
+				List<MotionEvent> motionEvents = getMotionEvents(tracks[trackNum], tracks[comparisonTrackNum]);
+				analyses.add(new Analysis(trackNum, comparisonTrackNum, motionEvents));
 			}
 		}
 		
@@ -86,8 +89,7 @@ public class Analyzer {
 		return intervalEvents;
 	}
 
-	private List<MotionEvent> getMotionEvents(List<IntervalEvent> events, 
-			List<IntervalEvent> comparisonEvents) {
+	private List<MotionEvent> getMotionEvents(List<IntervalEvent> events, List<IntervalEvent> comparisonEvents) {
 		List<MotionEvent> motionEvents = new ArrayList<>();
 		int eventInterval = 0;
 		int comparisonEventInterval = 0;
@@ -104,7 +106,7 @@ public class Analyzer {
 				comparisonEventTick = comparisonEvent.getTick();
 			}
 			if (eventTick == comparisonEventTick) {
-				Motion motion = getMotion(eventInterval, comparisonEventInterval);
+				ContrapuntalMotion motion = getContrapuntalMotion(eventInterval, comparisonEventInterval);
 				motionEvents.add(new MotionEvent(motion, comparisonEventTick));
 			}
 		}
@@ -118,16 +120,26 @@ public class Analyzer {
 		return getMotionEvents(intervalEvents, comparisonIntervalEvents);
 	}
 
-	private Motion getMotion(int interval, int comparisonInterval) {
-		if (interval == comparisonInterval) {
-			return Motion.PARALLEL; // TODO Implement more logic to account for loose parallel motion.
-		} else if ((interval > 0 && comparisonInterval > 0) 
-				|| (interval < 0 && comparisonInterval < 0)) {
-			return Motion.SIMILAR;
-		} else if (interval == 0 || comparisonInterval == 0) {
-			return Motion.OBLIQUE;
+	/**
+	 * Determine the type of {@link ContrapuntalMotion contrapuntal motion} between two intervals.<br>
+	 * Similar and parallel are exclusive types of motion.<br>
+	 * The motion is considered parallel if the two intervals are exactly the same or within a half step.
+	 * @param interval
+	 * @param comparisonInterval
+	 * @return One of oblique, parallel, similar, or contrary {@link ContrapuntalMotion motions}.
+	 */
+	private ContrapuntalMotion getContrapuntalMotion(int interval, int comparisonInterval) {
+		if (interval == 0 || comparisonInterval == 0) {
+			return OBLIQUE;
+		} else if (interval == comparisonInterval) {
+			return PARALLEL;
+		} else if (Math.max(interval, comparisonInterval) > 0 
+				&& Math.min(interval, comparisonInterval) < 0) {
+			return CONTRARY;
+		} else if (Math.max(interval, comparisonInterval) - Math.min(interval, comparisonInterval) == 1) {
+			return PARALLEL;
 		} else {
-			return Motion.CONTRARY;
+			return SIMILAR;
 		}
 	}
 }
