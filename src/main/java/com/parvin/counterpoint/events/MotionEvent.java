@@ -4,7 +4,7 @@ package com.parvin.counterpoint.events;
  * Represents a {@link ContrapuntalMotion} occurring at a specific time.
  * @author dparvin
  */
-public class MotionEvent {
+public final class MotionEvent {
 	private ContrapuntalMotion motion;
 	private long tick;
 	
