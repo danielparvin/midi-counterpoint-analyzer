@@ -59,7 +59,8 @@ public final class Analyzer {
 	public List<Analysis> analyzeTracks(int trackNumber, int comparisonTrackNumber) {
 		List<Analysis> analyses = new ArrayList<>();
 		List<MotionEvent> motionEvents = getMotionEvents(tracks[trackNumber], tracks[comparisonTrackNumber]);
-		analyses.add(new Analysis(filename, trackNumber, comparisonTrackNumber, motionEvents));
+		long ticks = Math.max(tracks[trackNumber].ticks(), tracks[comparisonTrackNumber].ticks());
+		analyses.add(new Analysis(filename, ticks, trackNumber, comparisonTrackNumber, motionEvents));
 		return analyses;
 	}
 	

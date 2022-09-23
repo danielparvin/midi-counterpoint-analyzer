@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.sound.midi.InvalidMidiDataException;
 
 import com.parvin.counterpoint.analysis.Analysis;
 import com.parvin.counterpoint.analysis.Analyzer;
+import com.parvin.counterpoint.events.ContrapuntalMotion;
+import com.parvin.counterpoint.events.MotionEvent;
 
 public final class Launcher {
 
@@ -59,7 +62,7 @@ public final class Launcher {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private static List<Analysis> analyzeMultipleFiles(List<File> midiFiles) 
 			throws InvalidMidiDataException, IOException {
 		List<Analysis> analyses = new ArrayList<>(midiFiles.size());
@@ -68,5 +71,18 @@ public final class Launcher {
 			analyses.addAll(analyzer.analyzeAllTracks());			
 		}
 		return analyses;
+	}
+	
+	private static long getNumberOfMotionEventsOfType(List<MotionEvent> motionEvents, ContrapuntalMotion type) {
+		return motionEvents.stream()
+				.filter(event -> event.getMotion() == type)
+				.count();
+	}
+
+	private static List<MotionEvent> getPortionOfAnalysis(Analysis analysis, long firstTick, long lastTick) {
+		return analysis.getMotionEvents()
+				.stream()
+				.filter(e -> e.getTick() >= firstTick && e.getTick() <= lastTick)
+				.collect(Collectors.toList());
 	}
 }
