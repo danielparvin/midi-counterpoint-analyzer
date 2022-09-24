@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.parvin.counterpoint.events.MotionEvent;
 
-import static com.parvin.counterpoint.events.ContrapuntalMotion.*;
-
 /**
  * Represents the counterpoint analysis of two MIDI tracks.
  * @author dparvin
@@ -49,34 +47,6 @@ public final class Analysis {
 
 	public List<MotionEvent> getMotionEvents() {
 		return Collections.unmodifiableList(motionEvents);
-	}
-
-	public long getNumberOfContraryMotionEvents() {
-		return motionEvents.stream()
-				.filter(event -> event.getMotion() == CONTRARY)
-				.count();
-	}
-	
-	public long getNumberOfObliqueMotionEvents() {
-		return motionEvents.stream()
-				.filter(event -> event.getMotion() == OBLIQUE)
-				.count();
-	}
-	
-	public long getNumberOfParallelMotionEvents() {
-		return motionEvents.stream()
-				.filter(event -> event.getMotion() == PARALLEL)
-				.count();
-	}
-	
-	/**
-	 * Get the number of similar (but <b>not</b> parallel) motion events.
-	 * @return Number of similar motion events.
-	 */
-	public long getNumberOfSimilarMotionEvents() {
-		return motionEvents.stream()
-				.filter(event -> event.getMotion() == SIMILAR)
-				.count();
 	}
 	
 	/**
