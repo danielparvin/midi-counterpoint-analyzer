@@ -1,7 +1,13 @@
 package com.parvin.counterpoint.analysis;
 
+import static com.parvin.counterpoint.events.ContrapuntalMotion.CONTRARY;
+import static com.parvin.counterpoint.events.ContrapuntalMotion.OBLIQUE;
+import static com.parvin.counterpoint.events.ContrapuntalMotion.PARALLEL;
+import static com.parvin.counterpoint.events.ContrapuntalMotion.SIMILAR;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,12 +19,10 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-import com.parvin.counterpoint.events.IntervalEvent;
 import com.parvin.counterpoint.events.ContrapuntalMotion;
+import com.parvin.counterpoint.events.IntervalEvent;
 import com.parvin.counterpoint.events.MotionEvent;
 import com.parvin.counterpoint.events.NoteOnEvent;
-
-import static com.parvin.counterpoint.events.ContrapuntalMotion.*;
 
 /**
  * A tool for performing counterpoint analysis on a MIDI file's {@link Track tracks}.
@@ -27,6 +31,12 @@ import static com.parvin.counterpoint.events.ContrapuntalMotion.*;
 public final class Analyzer {
 	private final String filename;
 	private final Track[] tracks;
+	
+	public Analyzer(String originalFilename, InputStream midiStream) throws InvalidMidiDataException, IOException {
+		filename = originalFilename;
+		Sequence midiSequence = MidiSystem.getSequence(midiStream);
+		tracks = midiSequence.getTracks();
+	}
 	
 	public Analyzer(File midiFile) throws InvalidMidiDataException, IOException {
 		filename = midiFile.getName();
