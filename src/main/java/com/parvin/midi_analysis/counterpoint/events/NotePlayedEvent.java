@@ -1,20 +1,20 @@
-package com.parvin.counterpoint.events;
+package com.parvin.midi_analysis.counterpoint.events;
 
 /**
- * Represents the moment in time (the "tick") at which a note is struck.<br>
- * This should <b>not</b> include Note On events with a velocity of zero.
+ * Represents the moment in time (the "tick") at which a note is played.<br>
+ * This should <b>not</b> include MIDI Note On events with a velocity of zero.
  * @author dparvin
  */
-public final class NoteOnEvent { // TODO Consider renaming the class to something that is less low-level.
+public final class NotePlayedEvent {
 	private final int note;
 	private final long tick;
 	
 	/**
-	 * Make a new event representing the moment in time (the "tick") at which a note is struck.
+	 * Make a new event representing the moment in time (the "tick") at which a note is played.
 	 * @param note The raw MIDI byte number of the note occurring in this event.
 	 * @param tick The raw MIDI byte number representing the time at which this event occurs.
 	 */
-	public NoteOnEvent(int note, long tick) {
+	public NotePlayedEvent(int note, long tick) {
 		this.note = note;
 		this.tick = tick;
 	}

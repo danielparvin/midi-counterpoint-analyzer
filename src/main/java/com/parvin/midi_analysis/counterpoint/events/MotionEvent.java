@@ -1,4 +1,4 @@
-package com.parvin.counterpoint.events;
+package com.parvin.midi_analysis.counterpoint.events;
 
 /**
  * Represents a {@link ContrapuntalMotion} occurring at a specific time.

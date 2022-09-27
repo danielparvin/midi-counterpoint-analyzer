@@ -1,5 +1,5 @@
 package com.parvin.counterpoint;
 
-public class AppTest {
+public class ApplicationTest {
 	// TODO
 }

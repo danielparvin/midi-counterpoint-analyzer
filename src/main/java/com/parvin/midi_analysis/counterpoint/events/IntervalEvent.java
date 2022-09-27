@@ -1,4 +1,4 @@
-package com.parvin.counterpoint.events;
+package com.parvin.midi_analysis.counterpoint.events;
 
 /**
  * Represents the interval (in positive or negative half steps) from the previous note to the current note 

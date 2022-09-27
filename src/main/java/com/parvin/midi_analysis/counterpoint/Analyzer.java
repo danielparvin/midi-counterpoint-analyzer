@@ -1,9 +1,9 @@
-package com.parvin.counterpoint.analysis;
+package com.parvin.midi_analysis.counterpoint;
 
-import static com.parvin.counterpoint.events.ContrapuntalMotion.CONTRARY;
-import static com.parvin.counterpoint.events.ContrapuntalMotion.OBLIQUE;
-import static com.parvin.counterpoint.events.ContrapuntalMotion.PARALLEL;
-import static com.parvin.counterpoint.events.ContrapuntalMotion.SIMILAR;
+import static com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion.CONTRARY;
+import static com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion.OBLIQUE;
+import static com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion.PARALLEL;
+import static com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion.SIMILAR;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,10 +19,10 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-import com.parvin.counterpoint.events.ContrapuntalMotion;
-import com.parvin.counterpoint.events.IntervalEvent;
-import com.parvin.counterpoint.events.MotionEvent;
-import com.parvin.counterpoint.events.NoteOnEvent;
+import com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion;
+import com.parvin.midi_analysis.counterpoint.events.IntervalEvent;
+import com.parvin.midi_analysis.counterpoint.events.MotionEvent;
+import com.parvin.midi_analysis.counterpoint.events.NotePlayedEvent;
 
 /**
  * A tool for performing counterpoint analysis on a MIDI file's {@link Track tracks}.
@@ -112,7 +112,7 @@ public final class Analyzer {
 	 * @param noteOnEvents 
 	 * @return
 	 */
-	private List<IntervalEvent> getIntervalEvents(List<NoteOnEvent> noteOnEvents) {
+	private List<IntervalEvent> getIntervalEvents(List<NotePlayedEvent> noteOnEvents) {
 		List<IntervalEvent> intervalEvents = new ArrayList<>();
 		if (noteOnEvents.size() < 2) {
 			return intervalEvents;
@@ -121,7 +121,7 @@ public final class Analyzer {
 		int previousNote = noteOnEvents.get(0).getNote();
 		long previousTick = noteOnEvents.get(0).getTick();
 		for (int i = 1; i < noteOnEvents.size(); i++) { // The first interval is between the first and second notes.
-			NoteOnEvent noteOnEvent = noteOnEvents.get(i);
+			NotePlayedEvent noteOnEvent = noteOnEvents.get(i);
 			int currentNote = noteOnEvent.getNote();
 			long currentTick = noteOnEvent.getTick();
 			if (currentTick > previousTick) {
@@ -168,8 +168,8 @@ public final class Analyzer {
 		return motionEvents;
 	}
 
-	private List<NoteOnEvent> getNoteOnEvents(Track track) {
-		List<NoteOnEvent> noteOnEvents = new ArrayList<>();
+	private List<NotePlayedEvent> getNoteOnEvents(Track track) {
+		List<NotePlayedEvent> noteOnEvents = new ArrayList<>();
 		for (int i = 0; i < track.size(); i++) {
 			MidiEvent event = track.get(i);
 			if (event.getMessage() instanceof ShortMessage) {
@@ -177,7 +177,7 @@ public final class Analyzer {
 				if (shortMessage.getCommand() == ShortMessage.NOTE_ON
 						// A Note On message with a velocity of zero often substitutes for a Note Off message.
 						&& shortMessage.getData2() != 0) {
-					noteOnEvents.add(new NoteOnEvent(shortMessage.getData1(), event.getTick()));
+					noteOnEvents.add(new NotePlayedEvent(shortMessage.getData1(), event.getTick()));
 				}
 			}
 		}

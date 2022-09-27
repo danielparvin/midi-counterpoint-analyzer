@@ -1,9 +1,9 @@
-package com.parvin.counterpoint.analysis;
+package com.parvin.midi_analysis.counterpoint;
 
 import java.util.Collections;
 import java.util.List;
 
-import com.parvin.counterpoint.events.MotionEvent;
+import com.parvin.midi_analysis.counterpoint.events.MotionEvent;
 
 /**
  * Represents the counterpoint analysis of two MIDI tracks.

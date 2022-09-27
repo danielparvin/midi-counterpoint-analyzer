@@ -1,10 +1,10 @@
-package com.parvin.counterpoint.analysis;
+package com.parvin.midi_analysis.counterpoint;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.parvin.counterpoint.events.ContrapuntalMotion;
-import com.parvin.counterpoint.events.MotionEvent;
+import com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion;
+import com.parvin.midi_analysis.counterpoint.events.MotionEvent;
 
 /**
  * A helper class to facilitate reporting the statistics of an {@link Analysis}.

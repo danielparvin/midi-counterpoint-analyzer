@@ -1,4 +1,4 @@
-package com.parvin.counterpoint.events;
+package com.parvin.midi_analysis.counterpoint.events;
 
 /**
  * This enum represents the four types of contrapuntal motion: oblique, similar, parallel, and contrary motion.<br>

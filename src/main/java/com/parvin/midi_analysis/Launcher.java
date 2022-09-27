@@ -1,4 +1,6 @@
-package com.parvin.counterpoint;
+package com.parvin.midi_analysis;
+
+import static com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +12,9 @@ import java.util.stream.Collectors;
 
 import javax.sound.midi.InvalidMidiDataException;
 
-import com.parvin.counterpoint.analysis.Analysis;
-import com.parvin.counterpoint.analysis.Analyzer;
-import com.parvin.counterpoint.analysis.Reporter;
-
-import static com.parvin.counterpoint.events.ContrapuntalMotion.*;
+import com.parvin.midi_analysis.counterpoint.Analysis;
+import com.parvin.midi_analysis.counterpoint.Analyzer;
+import com.parvin.midi_analysis.counterpoint.Reporter;
 
 public final class Launcher {
 	private static final String DIGITS = "(\\p{Digit}+)";

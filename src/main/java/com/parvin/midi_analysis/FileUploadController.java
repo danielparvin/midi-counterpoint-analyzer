@@ -1,4 +1,4 @@
-package com.parvin.counterpoint;
+package com.parvin.midi_analysis;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.parvin.counterpoint.analysis.Analyzer;
+import com.parvin.midi_analysis.counterpoint.Analyzer;
 
 @Controller
 public class FileUploadController {
-	@GetMapping("/")
+	@GetMapping("/upload")
 	public String getHome() {
 		return "uploadForm";
 	}
 	
-	@PostMapping("/")
+	@PostMapping("/upload")
 	public String handleUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 		try (InputStream inputStream = file.getInputStream()) {
 			new Analyzer(file.getOriginalFilename(), inputStream);
