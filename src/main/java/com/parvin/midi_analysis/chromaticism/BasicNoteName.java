@@ -24,7 +24,7 @@ public enum BasicNoteName {
 	}
 	
 	public static Optional<BasicNoteName> fromMidiNoteNumber(int midiNoteNumber) {
-		return Optional.empty(); // TODO Make flat and sharp variants?
+		return Optional.empty(); // TODO Implement. Make flat and sharp variants?
 	}
 	
 	private final int midiNoteNumber;

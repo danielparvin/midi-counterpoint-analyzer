@@ -25,7 +25,7 @@ public class Reporter {
 	}
 	
 	public long countMotionEventsOfTypeInRange(ContrapuntalMotion type, double fromPercentage, double toPercentage) {
-		if (fromPercentage < ZERO || fromPercentage > toPercentage || toPercentage > ONE_HUNDRED) {
+		if (fromPercentage < ZERO || fromPercentage >= toPercentage || toPercentage > ONE_HUNDRED) {
 			throw new IllegalArgumentException("Invalid percentage inputs "
 					+ fromPercentage + " and " + toPercentage + "!\n"
 					+ "Ensure that fromPercentage is at least 0.0, "
