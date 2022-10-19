@@ -20,6 +20,11 @@
 			<li th:each="file: ${session.uploadedFiles}" th:text="${file}"/>
 		</ul>
 	</div>
+	<div th:if="${not #lists.isEmpty(session.uploadedFiles)}">
+		<form method="POST" enctype="multipart/form-data" action="/report">
+			<input type="submit" value="Analyze MIDI files!"/>
+		</form>
+	</div>
 
 </body>
 </html>

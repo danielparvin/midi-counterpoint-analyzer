@@ -1,5 +1,6 @@
 package com.parvin.midi_analysis;
 
+import static com.parvin.midi_analysis.StaticStrings.MESSAGE;
 import static com.parvin.midi_analysis.StaticStrings.MID;
 import static com.parvin.midi_analysis.StaticStrings.MIDI;
 import static com.parvin.midi_analysis.StaticStrings.UPLOADED_FILES;
@@ -9,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -39,25 +41,25 @@ public class FileUploadController {
 		String filenameExtension = getFilenameExtension(file.getOriginalFilename());
 		if (filenameExtension.equalsIgnoreCase(MID) || filenameExtension.equalsIgnoreCase(MIDI)) {
 			try {
-				File sessionFile = convertToTempFile(file);
+				File sessionFile = convertToTempMidFile(file);
 				uploadedFiles.add(sessionFile);
-				redirectAttributes.addFlashAttribute("message", "Uploaded file successfully!");
+				redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded file successfully!");
 			} catch (IOException e) {
 				e.printStackTrace();
-				redirectAttributes.addFlashAttribute("message", "Upload failed.");
+				redirectAttributes.addFlashAttribute(MESSAGE, "Upload failed.");
 			}
 		} else if (filenameExtension == "zip") {
 			uploadedFiles.addAll(extractFilesFrom(file));
-			redirectAttributes.addFlashAttribute("message", "Uploaded and extracted ZIP file successfully!");
+			redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded and extracted ZIP file successfully!");
 		} else {
-			redirectAttributes.addFlashAttribute("message", "Uploaded file must be a .MID, .MIDI, or .ZIP file!");
+			redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded file must be a .MID, .MIDI, or .ZIP file!");
 		}
 		return "redirect:/upload";
 	}
 
-	private File convertToTempFile(MultipartFile multipartFile) throws IOException {
+	private File convertToTempMidFile(MultipartFile multipartFile) throws IOException {
 		try (InputStream inputStream = multipartFile.getInputStream()) {
-			File tempFile = File.createTempFile("midi", ".mid");
+			File tempFile = Files.createTempFile("temp", ".mid").toFile();
 			tempFile.deleteOnExit();
 			multipartFile.transferTo(tempFile);
 			return tempFile;

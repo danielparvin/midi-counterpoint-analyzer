@@ -1,0 +1,14 @@
+<html xmlns:th="https://www.thymeleaf.org">
+<body>
+	<div th:if="${message}">
+		<h3 th:text="${message}"/>
+	</div>
+	
+	<div th:if="${($report == null)}">
+		<p>No report available! Upload a MIDI file <a href="/upload">here</a>.</p>
+	</div>
+	<div>
+		
+	</div>
+</body>
+</html>

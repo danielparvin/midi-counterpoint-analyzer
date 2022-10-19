@@ -1,5 +1,7 @@
 package com.parvin.midi_analysis;
 
+import static com.parvin.midi_analysis.StaticStrings.UPLOADED_FILES;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,7 +29,7 @@ public class SessionListeners {
 		return new ApplicationListener<HttpSessionCreatedEvent>() {
 			@Override
 			public void onApplicationEvent(HttpSessionCreatedEvent event) {
-				event.getSession().setAttribute(StaticStrings.UPLOADED_FILES, new ArrayList<File>());
+				event.getSession().setAttribute(UPLOADED_FILES, new ArrayList<File>());
 			}
 		};
 	}
@@ -40,8 +42,8 @@ public class SessionListeners {
 			public void onApplicationEvent(HttpSessionDestroyedEvent event) {
 				HttpSession session = event.getSession();
 				List<File> uploadedFiles = new ArrayList<>();
-				if (session.getAttribute(StaticStrings.UPLOADED_FILES) != null) {
-					uploadedFiles = (List<File>) session.getAttribute(StaticStrings.UPLOADED_FILES);
+				if (session.getAttribute(UPLOADED_FILES) != null) {
+					uploadedFiles = (List<File>) session.getAttribute(UPLOADED_FILES);
 				}
 				for (File file: uploadedFiles) {
 					try {
