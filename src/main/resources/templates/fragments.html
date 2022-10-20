@@ -1,0 +1,27 @@
+<html xmlns:th="https://www.thymeleaf.org">
+<head th:fragment="head">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT"
+	crossorigin="anonymous">
+</head>
+
+<body>
+	<header th:fragment="header">
+		<h1>MIDI Analyzer</h1>
+	</header>
+	<form th:fragment="upload-form" method="POST"
+		enctype="multipart/form-data" action="/upload" style="display: inline">
+		<input type="file" id="upload-button" onchange="form.submit()"
+			style="display: none;" /> <label for="upload-button">Upload</label>
+	</form>
+
+	<div th:fragment="upload">
+		<form th:replace="this :: upload-form"></form>
+		a .midi, .mid, or .zip file.
+	</div>
+
+	<footer th:fragment="footer">&copy; 2022 Daniel Parvin</footer>
+</body>
+</html>
