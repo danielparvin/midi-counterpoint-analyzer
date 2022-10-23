@@ -3,7 +3,9 @@
 
 <body>
 	<header th:replace="fragments :: header"></header>
-	<div th:insert="fragments :: upload"></div>
+	<div th:replace="${#lists.isEmpty(session.uploadedFiles)} ? ~{fragments :: upload} : ~{fragments :: another-upload}"></div>
+	<div th:replace="fragments :: or"></div>
+	<div th:replace="fragments :: analyze"></div>
 	<footer th:replace="fragments :: footer"></footer>
 </body>
 </html>

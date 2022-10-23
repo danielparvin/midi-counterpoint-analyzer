@@ -11,6 +11,7 @@
 	<header th:fragment="header">
 		<h1>MIDI Analyzer</h1>
 	</header>
+	
 	<form th:fragment="upload-form" method="POST"
 		enctype="multipart/form-data" action="/upload" style="display: inline">
 		<input type="file" id="upload-button" onchange="form.submit()"
@@ -20,6 +21,19 @@
 	<div th:fragment="upload">
 		<form th:replace="this :: upload-form"></form>
 		a .midi, .mid, or .zip file.
+	</div>
+	
+	<div th:fragment="another-upload">
+		<form th:replace="this :: upload-form"></form>
+		another .midi, .mid, or .zip file.
+	</div>
+	
+	<div th:fragment="or">
+		OR
+	</div>
+	
+	<div th:fragment="analyze">
+	
 	</div>
 
 	<footer th:fragment="footer">&copy; 2022 Daniel Parvin</footer>
