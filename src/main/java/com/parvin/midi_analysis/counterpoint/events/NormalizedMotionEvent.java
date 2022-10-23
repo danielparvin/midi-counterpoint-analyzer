@@ -9,9 +9,13 @@ public final class NormalizedMotionEvent extends MotionEvent {
 
 	public NormalizedMotionEvent(ContrapuntalMotion motion, long tick, long totalTicks) {
 		super(motion, tick);
-		normalizedTiming = tick / (double) totalTicks;
+		normalizedTiming = (tick / (double) totalTicks) * 100.0 ;
 	}
 
+	/**
+	 * Get the normalized time at which this event took place (between 0.0 and 100.0, inclusive).
+	 * @return Normalized time (between 0.0 and 100.0, inclusive).
+	 */
 	public double getNormalizedTiming() {
 		return normalizedTiming;
 	}
