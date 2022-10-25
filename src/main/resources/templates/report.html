@@ -1,14 +1,17 @@
 <html xmlns:th="https://www.thymeleaf.org">
 <body>
-	<div th:if="${message}">
-		<h3 th:text="${message}"/>
+	<div th:if="${session.analysis != null}">
+		<ul>
+			<li>Contrary motion events: <b
+				th:text="${session.analysis.contraryMotionEvents}"></b></li>
+			<li>Similar motion events: <b
+				th:text="${session.analysis.similarMotionEvents}"></b></li>
+			<li>Oblique motion events: <b
+				th:text="${session.analysis.obliqueMotionEvents}"></b></li>
+		</ul>
 	</div>
-	
-	<div th:if="${($report == null)}">
-		<p>No report available! Upload a MIDI file <a href="/upload">here</a>.</p>
-	</div>
-	<div>
-		
+	<div th:if="${session.motionHistogram != null}">
+		<img th:src="@{/resources/images/${session.motionHistogram.src}}"/>
 	</div>
 </body>
 </html>

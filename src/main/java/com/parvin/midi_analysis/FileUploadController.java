@@ -54,7 +54,7 @@ public class FileUploadController {
 		} else {
 			redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded file must be a .MID, .MIDI, or .ZIP file!");
 		}
-		return "redirect:/upload";
+		return "redirect:/";
 	}
 
 	private File convertToTempMidFile(MultipartFile multipartFile) throws IOException {
