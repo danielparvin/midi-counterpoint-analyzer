@@ -9,7 +9,7 @@
 	</ul>
 	
 	<th:block th:if="${!#lists.isEmpty(session.uploadedFiles)}">
-		<div id="analyze"></div>
+		<div id="analyze"><button th:replace="fragments :: analyze-btn"></button></div>
 		<div id="or"></div>
 		<div id="upload-another" th:text="#{upload-another-file}"></div>
 	</th:block>

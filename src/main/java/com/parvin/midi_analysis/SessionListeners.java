@@ -1,10 +1,12 @@
 package com.parvin.midi_analysis;
 
-import static com.parvin.midi_analysis.StaticStrings.UPLOADED_FILES;
+import static com.parvin.midi_analysis.StaticStrings.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,12 @@ public class SessionListeners {
 			@Override
 			public void onApplicationEvent(HttpSessionCreatedEvent event) {
 				event.getSession().setAttribute(UPLOADED_FILES, new ArrayList<File>());
+				try {
+					Path tempDirectory = Files.createTempDirectory("temp");
+					event.getSession().setAttribute(TEMP_DIRECTORY, tempDirectory);
+				} catch (IOException e) {
+					e.printStackTrace(); // TODO Figure out what to do in this case.
+				}
 			}
 		};
 	}

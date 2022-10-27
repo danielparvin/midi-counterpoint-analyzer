@@ -5,7 +5,6 @@
 	<header th:replace="fragments :: header"></header>
 	<div th:if="${message}" th:text="${message}"></div>
 	<div th:replace="${#lists.isEmpty(session.uploadedFiles)} ? ~{} : ~{fragments :: uploaded-files}"></div>
-	<div th:if="${!#lists.isEmpty(session.uploadedFiles)}" th:text="test"></div>
 	<div th:replace="${#lists.isEmpty(session.uploadedFiles)} ? ~{fragments :: upload} : ~{fragments :: another-upload}"></div>
 	<div th:replace="fragments :: or"></div>
 	<div th:replace="fragments :: analyze"></div>

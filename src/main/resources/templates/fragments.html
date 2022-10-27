@@ -11,6 +11,10 @@
 	<header th:fragment="header">
 		<h1>MIDI Analyzer</h1>
 	</header>
+	
+	<button th:fragment="analyze-btn" onclick="analyze()">Analyze</button>
+	
+	<div th:fragment="analyze"><button th:replace="this :: analyze-btn">Analyze</button></div>
 
 	<form th:fragment="upload-form" method="POST"
 		enctype="multipart/form-data" action="/upload">
