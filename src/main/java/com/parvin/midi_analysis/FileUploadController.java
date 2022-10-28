@@ -1,25 +1,21 @@
 package com.parvin.midi_analysis;
 
 import static com.parvin.midi_analysis.StaticStrings.MESSAGE;
-import static com.parvin.midi_analysis.StaticStrings.MID;
-import static com.parvin.midi_analysis.StaticStrings.MIDI;
+import static com.parvin.midi_analysis.StaticStrings.TEMP_DIRECTORY;
 import static com.parvin.midi_analysis.StaticStrings.UPLOADED_FILES;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.util.ArrayList;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,71 +23,68 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class FileUploadController {
-	@GetMapping("/upload")
-	public String getHome() {
-		return "uploadForm";
-	}
-
 	@PostMapping("/upload")
 	public String handleUpload(HttpSession session, 
 			@RequestParam("file") MultipartFile file, 
 			RedirectAttributes redirectAttributes) {
 		@SuppressWarnings("unchecked")
 		List<File> uploadedFiles = (List<File>) session.getAttribute(UPLOADED_FILES);
-		String filenameExtension = getFilenameExtension(file.getOriginalFilename());
-		if (filenameExtension.equalsIgnoreCase(MID) || filenameExtension.equalsIgnoreCase(MIDI)) {
+		Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY);
+		String originalFilename = file.getOriginalFilename();
+		if (hasMidiExtension(originalFilename)) {
 			try {
-				File sessionFile = convertToTempMidFile(file);
-				uploadedFiles.add(sessionFile);
+				File uploadedFile = tempDirectory.resolve(file.getOriginalFilename()).toFile();
+				file.transferTo(uploadedFile);
+				uploadedFiles.add(uploadedFile);
 				redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded file successfully!");
 			} catch (IOException e) {
 				e.printStackTrace();
 				redirectAttributes.addFlashAttribute(MESSAGE, "Upload failed.");
 			}
-		} else if (filenameExtension == "zip") {
-			uploadedFiles.addAll(extractFilesFrom(file));
-			redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded and extracted ZIP file successfully!");
+		} else if (hasZipExtension(originalFilename)) {
+			try {
+				File zipFile = tempDirectory.resolve(file.getOriginalFilename()).toFile();
+				file.transferTo(zipFile);
+				try (FileSystem fileSystem = FileSystems.newFileSystem(zipFile.toPath())) {
+					Files.walk(fileSystem.getPath("/"))
+					.filter(p -> p.getNameCount() > 0  && (hasMidiExtension(p.getFileName().toString())))
+					.forEach(p -> {
+						File uploadedFile = tempDirectory.resolve(p.getFileName().toString()).toFile();
+						try {
+							Files.copy(p, uploadedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+							uploadedFiles.add(uploadedFile);
+						} catch (IOException e) {
+							e.printStackTrace(); // TODO Add flash attributes depending on successes/failures.
+						}
+					});
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				redirectAttributes.addFlashAttribute(MESSAGE, "Upload failed.");
+			}
 		} else {
 			redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded file must be a .MID, .MIDI, or .ZIP file!");
 		}
 		return "redirect:/";
 	}
 
-	private File convertToTempMidFile(MultipartFile multipartFile) throws IOException {
-		try (InputStream inputStream = multipartFile.getInputStream()) {
-			File tempFile = Files.createTempFile("temp", ".mid").toFile();
-			tempFile.deleteOnExit();
-			multipartFile.transferTo(tempFile);
-			return tempFile;
-		}
-	}
-
-	private List<File> extractFilesFrom(MultipartFile zipFile) {
-		List<File> files = new ArrayList<>();
-		try (ZipInputStream zipInputStream = new ZipInputStream(zipFile.getInputStream())) {
-			byte[] buffer = new byte[1024];
-			ZipEntry zipEntry = zipInputStream.getNextEntry();
-			while (zipEntry != null) {
-				File tempFile = File.createTempFile("upload", ".mid");
-				tempFile.deleteOnExit();
-				BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tempFile));
-				int count;
-				while ((count = zipInputStream.read(buffer, 0, buffer.length)) != -1) {
-					outputStream.write(buffer, 0, count);
-				}
-				outputStream.close();
-				zipInputStream.closeEntry();
-				files.add(tempFile);
-				zipEntry = zipInputStream.getNextEntry();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return files;
-	}
-
-	private String getFilenameExtension(String filename) {
+	private boolean hasMidiExtension(String filename) {
 		int dotIndex = filename.lastIndexOf('.');
-		return (dotIndex == -1) ? "" : filename.substring(dotIndex + 1);
+		if (dotIndex > 0) {
+			String extension = filename.substring(dotIndex);
+			return extension.equalsIgnoreCase(".mid") || extension.equalsIgnoreCase(".midi");
+		} else {
+			return false;
+		}
+	}
+
+	private boolean hasZipExtension(String filename) {
+		int dotIndex = filename.lastIndexOf('.');
+		if (dotIndex > 0) {
+			String extension = filename.substring(dotIndex);
+			return extension.equalsIgnoreCase(".zip");
+		} else {
+			return false;
+		}
 	}
 }

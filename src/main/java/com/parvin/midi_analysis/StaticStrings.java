@@ -11,9 +11,4 @@ public class StaticStrings {
 	public static final String COUNTERPOINT_ANALYSES = "counterpointAnalyses";
 	public static final String UPLOADED_FILES = "uploadedFiles";
 	public static final String TEMP_DIRECTORY = "tempDirectory";
-	
-	// Filename extensions
-	public static final String MID = "mid";
-	public static final String MIDI = "midi";
-	public static final String ZIP = "zip";
 }
