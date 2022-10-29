@@ -109,30 +109,29 @@ public final class Analyzer {
 	/**
 	 * Calculate the intervals from the first note to the second note, on to the last note.<br>
 	 * When multiple notes occur at the same time, use the highest note of the chord to calculate the interval.
-	 * @param noteOnEvents 
-	 * @return
+	 * @param notePlayedEvents 
+	 * @return List of IntervalEvents
 	 */
-	private List<IntervalEvent> getIntervalEvents(List<NotePlayedEvent> noteOnEvents) {
+	private List<IntervalEvent> getIntervalEvents(List<NotePlayedEvent> notePlayedEvents) {
 		List<IntervalEvent> intervalEvents = new ArrayList<>();
-		if (noteOnEvents.size() < 2) {
+		if (notePlayedEvents.size() < 2) {
 			return intervalEvents;
 		}
 
-		int previousNote = noteOnEvents.get(0).getNote();
-		long previousTick = noteOnEvents.get(0).getTick();
-		for (int i = 1; i < noteOnEvents.size(); i++) { // The first interval is between the first and second notes.
-			NotePlayedEvent noteOnEvent = noteOnEvents.get(i);
+		int previousNote = notePlayedEvents.get(0).getNote();
+		long previousTick = notePlayedEvents.get(0).getTick();
+		for (int i = 1; i < notePlayedEvents.size(); i++) { // The first interval is between the first and second notes.
+			NotePlayedEvent noteOnEvent = notePlayedEvents.get(i);
 			int currentNote = noteOnEvent.getNote();
 			long currentTick = noteOnEvent.getTick();
 			if (currentTick > previousTick) {
 				intervalEvents.add(new IntervalEvent(currentNote - previousNote, currentTick));
-			} else if (currentTick == previousTick) {
-				if (currentNote > previousNote) { // Use the highest note of the tick.
+			} else if (currentTick == previousTick && currentNote > previousNote) { // Use the highest note of the tick.
 					intervalEvents.remove(intervalEvents.size() - 1);
 					intervalEvents.add(new IntervalEvent(currentNote - previousNote, currentTick));
-				}
 			} else {
-				throw new IllegalArgumentException("The \"Note On\" events are not in the correct order!");
+				throw new IllegalArgumentException("The MIDI file is malformed--"
+						+ "The \"Note On\" events are not in chronological order!");
 			}
 			previousNote = currentNote;
 			previousTick = currentTick;

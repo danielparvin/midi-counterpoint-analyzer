@@ -1,14 +1,14 @@
 package com.parvin.midi_analysis;
 
-import static com.parvin.midi_analysis.StaticStrings.*;
+import static com.parvin.midi_analysis.StaticStrings.TEMP_DIRECTORY;
+import static com.parvin.midi_analysis.StaticStrings.UPLOADED_FILES;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpSession;
 
@@ -28,38 +28,35 @@ public class SessionListeners {
 
 	@Bean
 	public ApplicationListener<HttpSessionCreatedEvent> loginListener() {
-		return new ApplicationListener<HttpSessionCreatedEvent>() {
-			@Override
-			public void onApplicationEvent(HttpSessionCreatedEvent event) {
-				event.getSession().setAttribute(UPLOADED_FILES, new ArrayList<File>());
-				try {
-					Path tempDirectory = Files.createTempDirectory("temp");
-					event.getSession().setAttribute(TEMP_DIRECTORY, tempDirectory);
-				} catch (IOException e) {
-					e.printStackTrace(); // TODO Figure out what to do in this case.
-				}
+		return event -> {
+			event.getSession().setAttribute(UPLOADED_FILES, new TreeSet<File>());
+			try {
+				Path tempDirectory = Files.createTempDirectory("temp");
+				event.getSession().setAttribute(TEMP_DIRECTORY, tempDirectory);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		};
 	}
 
 	@Bean
 	public ApplicationListener<HttpSessionDestroyedEvent> logoutListener() {
-		return new ApplicationListener<HttpSessionDestroyedEvent>() {
+		return event -> {
+			HttpSession session = event.getSession();
 			@SuppressWarnings("unchecked")
-			@Override
-			public void onApplicationEvent(HttpSessionDestroyedEvent event) {
-				HttpSession session = event.getSession();
-				List<File> uploadedFiles = new ArrayList<>();
-				if (session.getAttribute(UPLOADED_FILES) != null) {
-					uploadedFiles = (List<File>) session.getAttribute(UPLOADED_FILES);
+			Set<File> uploadedFiles = (Set<File>) session.getAttribute(UPLOADED_FILES);
+			for (File file: uploadedFiles) {
+				try {
+					Files.deleteIfExists(file.toPath());
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				for (File file: uploadedFiles) {
-					try {
-						Files.deleteIfExists(file.toPath());
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+			}
+			Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY);
+			try {
+				Files.deleteIfExists(tempDirectory);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		};
 	}

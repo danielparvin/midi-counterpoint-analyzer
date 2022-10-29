@@ -1,17 +1,18 @@
 package com.parvin.midi_analysis;
 
+import static com.parvin.midi_analysis.FilenameUtils.filenameHasExtension;
 import static com.parvin.midi_analysis.StaticStrings.MESSAGE;
 import static com.parvin.midi_analysis.StaticStrings.TEMP_DIRECTORY;
 import static com.parvin.midi_analysis.StaticStrings.UPLOADED_FILES;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpSession;
 
@@ -28,10 +29,10 @@ public class FileUploadController {
 			@RequestParam("file") MultipartFile file, 
 			RedirectAttributes redirectAttributes) {
 		@SuppressWarnings("unchecked")
-		List<File> uploadedFiles = (List<File>) session.getAttribute(UPLOADED_FILES);
+		Set<File> uploadedFiles = (Set<File>) session.getAttribute(UPLOADED_FILES);
 		Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY);
 		String originalFilename = file.getOriginalFilename();
-		if (hasMidiExtension(originalFilename)) {
+		if (filenameHasExtension(originalFilename, "mid", "midi")) {
 			try {
 				File uploadedFile = tempDirectory.resolve(file.getOriginalFilename()).toFile();
 				file.transferTo(uploadedFile);
@@ -41,50 +42,31 @@ public class FileUploadController {
 				e.printStackTrace();
 				redirectAttributes.addFlashAttribute(MESSAGE, "Upload failed.");
 			}
-		} else if (hasZipExtension(originalFilename)) {
+		} else if (filenameHasExtension(originalFilename, "zip")) {
 			try {
 				File zipFile = tempDirectory.resolve(file.getOriginalFilename()).toFile();
 				file.transferTo(zipFile);
-				try (FileSystem fileSystem = FileSystems.newFileSystem(zipFile.toPath())) {
-					Files.walk(fileSystem.getPath("/"))
-					.filter(p -> p.getNameCount() > 0  && (hasMidiExtension(p.getFileName().toString())))
-					.forEach(p -> {
-						File uploadedFile = tempDirectory.resolve(p.getFileName().toString()).toFile();
+				try (Stream<Path> paths = Files.walk(FileSystems.newFileSystem(zipFile.toPath()).getPath("/"))) {
+					paths.filter(path -> path.getNameCount() > 0 // Filter out the root element.
+							&& (filenameHasExtension(path.getFileName().toString(), "mid", "midi")))
+					.forEach(path -> {
+						File uploadedFile = tempDirectory.resolve(path.getFileName().toString()).toFile();
 						try {
-							Files.copy(p, uploadedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+							Files.copy(path, uploadedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 							uploadedFiles.add(uploadedFile);
 						} catch (IOException e) {
-							e.printStackTrace(); // TODO Add flash attributes depending on successes/failures.
+							e.printStackTrace();
 						}
 					});
 				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 				redirectAttributes.addFlashAttribute(MESSAGE, "Upload failed.");
 			}
+			redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded files successfully!");
 		} else {
 			redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded file must be a .MID, .MIDI, or .ZIP file!");
 		}
 		return "redirect:/";
-	}
-
-	private boolean hasMidiExtension(String filename) {
-		int dotIndex = filename.lastIndexOf('.');
-		if (dotIndex > 0) {
-			String extension = filename.substring(dotIndex);
-			return extension.equalsIgnoreCase(".mid") || extension.equalsIgnoreCase(".midi");
-		} else {
-			return false;
-		}
-	}
-
-	private boolean hasZipExtension(String filename) {
-		int dotIndex = filename.lastIndexOf('.');
-		if (dotIndex > 0) {
-			String extension = filename.substring(dotIndex);
-			return extension.equalsIgnoreCase(".zip");
-		} else {
-			return false;
-		}
 	}
 }

@@ -27,7 +27,7 @@ public class ReportController {
 	}
 	
 	@PostMapping(REPORT)
-	private String analyzeAllUploadedFiles(HttpSession session, RedirectAttributes redirectAttributes) {
+	public String analyzeAllUploadedFiles(HttpSession session, RedirectAttributes redirectAttributes) {
 		List<Analysis> analyses = new ArrayList<>();
 		@SuppressWarnings("unchecked")
 		List<File> uploadedFiles = (List<File>) session.getAttribute(UPLOADED_FILES);

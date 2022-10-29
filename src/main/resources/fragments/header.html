@@ -1,8 +1,10 @@
+<!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" lang="en">
 <head th:replace="fragments :: head"></head>
+
 <body>
-	<header th:replace="fragments :: header"></header>
-	
-	<footer th:replace="fragments :: footer"></footer>
+	<header th:fragment="header">
+		<h1>MIDI Analyzer</h1>
+	</header>
 </body>
 </html>
