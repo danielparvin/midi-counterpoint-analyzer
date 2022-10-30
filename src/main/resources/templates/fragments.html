@@ -28,7 +28,7 @@
 	<div th:fragment="uploaded-files"
 		th:if="${!#lists.isEmpty(session.uploadedFiles)}">
 		<div th:each="file: ${session.uploadedFiles}">
-			<div th:text=${file.name}></div>
+			<div th:text=${file.toString}></div>
 		</div>
 
 	</div>

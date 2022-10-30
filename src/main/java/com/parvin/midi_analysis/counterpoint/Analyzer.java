@@ -65,6 +65,7 @@ public final class Analyzer {
 	 * @param trackNumber Index of the primary track.
 	 * @param comparisonTrackNumber Index of the comparison track.
 	 * @return Analysis of the contrapuntal motion between the two tracks.
+	 * @throws InvalidMidiDataException 
 	 */
 	public List<Analysis> analyzeTracks(int trackNumber, int comparisonTrackNumber) {
 		List<Analysis> analyses = new ArrayList<>();
@@ -129,9 +130,6 @@ public final class Analyzer {
 			} else if (currentTick == previousTick && currentNote > previousNote) { // Use the highest note of the tick.
 					intervalEvents.remove(intervalEvents.size() - 1);
 					intervalEvents.add(new IntervalEvent(currentNote - previousNote, currentTick));
-			} else {
-				throw new IllegalArgumentException("The MIDI file is malformed--"
-						+ "The \"Note On\" events are not in chronological order!");
 			}
 			previousNote = currentNote;
 			previousTick = currentTick;

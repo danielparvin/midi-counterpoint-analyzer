@@ -1,5 +1,6 @@
 package com.parvin.midi_analysis.counterpoint;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,11 +14,11 @@ import com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion;
 import com.parvin.midi_analysis.counterpoint.events.NormalizedMotionEvent;
 
 public class CounterpointHistogramMaker {
-	private List<Analysis> analyses;
+	private Collection<Analysis> analyses;
 	private int binSize;
 
-	public CounterpointHistogramMaker(List<Analysis> analyses, int binSize) {
-		this.analyses = Collections.unmodifiableList(analyses);
+	public CounterpointHistogramMaker(Collection<Analysis> analyses, int binSize) {
+		this.analyses = Collections.unmodifiableCollection(analyses);
 		this.binSize  = binSize;
 	}
 
@@ -54,6 +55,6 @@ public class CounterpointHistogramMaker {
 		xyCollection.addSeries(obliqueHistogram.toXYIntervalSeries("Oblique Motion Events"));
 		
 		return ChartFactory.createHistogram("Frequency of Contrapuntal Motion Events", "% Total Length", 
-				"Number of Events", xyCollection, PlotOrientation.HORIZONTAL, true, false, false);
+				"Number of Events", xyCollection, PlotOrientation.VERTICAL, true, false, false);
 	}
 }

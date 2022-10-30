@@ -3,6 +3,13 @@
 <body>
 	<header th:replace="fragments :: header"></header>
 	
+	<div>
+	<p th:text="${session.counterpointHistogramPng}"></p>
+	<p th:text="${session.tempDirectory}"></p>
+	<p th:text="${session.counterpointHistogramPng.getFileName}"></p>
+	
+	</div>
+	
 	<footer th:replace="fragments :: footer"></footer>
 </body>
 </html>

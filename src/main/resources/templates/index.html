@@ -9,6 +9,7 @@
 	<div th:replace="${#lists.isEmpty(session.uploadedFiles)} ? ~{fragments :: upload} : ~{fragments :: another-upload}"></div>
 	<div th:replace="fragments :: or"></div>
 	<div th:replace="fragments :: analyze"></div>
+	<a href="/analysis">Analyze!</a>
 	<footer th:replace="fragments :: footer"></footer>
 </body>
 </html>

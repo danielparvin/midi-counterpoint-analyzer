@@ -5,16 +5,16 @@ import java.util.Arrays;
 import org.jfree.data.xy.XYIntervalSeries;
 
 public class HistogramDataset {
-	private int[] data;
+	private int[] frequencyData;
 	private double binSize;
-	private double minValue;
 	private double maxValue;
-
+	private double minValue;
+	
 	public HistogramDataset(double minValue, double maxValue, double binSize) {
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 		this.binSize = binSize;
-		this.data = new int[calculateNumberOfBins()];
+		this.frequencyData = new int[calculateNumberOfBins()];
 	}
 
 	/**
@@ -22,45 +22,46 @@ public class HistogramDataset {
 	 * @param value Value to increment the frequency of.
 	 */
 	public void addObservation(double value) {
-		data[calculateRelevantBin(value)]++;
+		frequencyData[calculateRelevantBin(value)]++;
 	}
 
 	public int[] getBinnedData() {
-		return Arrays.copyOf(data, data.length);
+		return Arrays.copyOf(frequencyData, frequencyData.length);
 	}
 
 	public double getBinSize() {
 		return binSize;
 	}
 
-	public int getNumberOfBins() {
-		return data.length;
+	public double getMaxValue() {
+		return maxValue;
 	}
 
 	public double getMinValue() {
 		return minValue;
 	}
 
-	public double getMaxValue() {
-		return maxValue;
+	public int getNumberOfBins() {
+		return frequencyData.length;
 	}
 
-	public double getValue(int binNumber) {
-		return data[binNumber];
+	public int getFrequencyAtBin(int binNumber) {
+		return frequencyData[binNumber];
+	}
+	
+	public int getFrequencyOfValue(double value) {
+		return frequencyData[calculateRelevantBin(value)];
 	}
 
 	public XYIntervalSeries toXYIntervalSeries(String name) {
 		XYIntervalSeries xyIntervalSeries = new XYIntervalSeries(name);
-		for (int binNumber = 0; binNumber < data.length; binNumber++) {
-			double xMid = Math.min((binNumber * binSize + (binNumber + 1) * binSize) / 2.0, maxValue);
-			xyIntervalSeries.add(xMid, 
-					binNumber * binSize, 
-					Math.min((binNumber + 1) * binSize, maxValue), 
-					getValue(binNumber), 
-					getValue(binNumber), 
-					getValue(binNumber));
+		for (int binNumber = 0; binNumber < frequencyData.length; binNumber++) {
+			double xLow = binNumber * binSize + minValue;
+			double xHigh = Math.min((binNumber + 1) * binSize + minValue, maxValue);
+			double xMid = xLow + xHigh / 2.0;
+			double y = getFrequencyAtBin(binNumber);
+			xyIntervalSeries.add(xMid, xLow, xHigh, y, y, y);
 		}
-
 		return xyIntervalSeries;
 	}
 
@@ -78,7 +79,7 @@ public class HistogramDataset {
 			throw new IllegalArgumentException("Value is outside the range of the histogram.");
 		}
 		if (value == maxValue) {
-			return data.length - 1;
+			return frequencyData.length - 1;
 		}
 
 		return (int) (value / binSize);

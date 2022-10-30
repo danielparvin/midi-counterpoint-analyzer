@@ -1,7 +1,6 @@
 package com.parvin.midi_analysis;
 
 import static com.parvin.midi_analysis.StaticStrings.REPORT;
-import static com.parvin.midi_analysis.StaticStrings.UPLOADED_FILES;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +29,7 @@ public class ReportController {
 	public String analyzeAllUploadedFiles(HttpSession session, RedirectAttributes redirectAttributes) {
 		List<Analysis> analyses = new ArrayList<>();
 		@SuppressWarnings("unchecked")
-		List<File> uploadedFiles = (List<File>) session.getAttribute(UPLOADED_FILES);
+		List<File> uploadedFiles = (List<File>) session.getAttribute(SessionHandler.UPLOADED_MIDI_FILES_SET);
 		for (File file: uploadedFiles) {
 			try {
 				Analyzer analyzer = new Analyzer(file);
@@ -39,7 +38,7 @@ public class ReportController {
 				e.printStackTrace();
 			}
 		}
-		session.setAttribute(StaticStrings.COUNTERPOINT_ANALYSES, analyses);
+		session.setAttribute(SessionHandler.COUNTERPOINT_ANALYSES_LIST, analyses);
 		return "redirect:/report";
 	}
 	

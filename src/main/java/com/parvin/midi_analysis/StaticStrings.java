@@ -7,11 +7,6 @@ public class StaticStrings {
 	// Flash attributes
 	public static final String MESSAGE = "message";
 
-	// Session attributes
-	public static final String COUNTERPOINT_ANALYSES = "counterpointAnalyses";
-	public static final String UPLOADED_FILES = "uploadedFiles";
-	public static final String TEMP_DIRECTORY = "tempDirectory";
-	
 	private StaticStrings() throws IllegalStateException {
 		throw new IllegalStateException("Utility class!");
 	}

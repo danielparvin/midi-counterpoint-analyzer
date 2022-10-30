@@ -1,9 +1,9 @@
 package com.parvin.midi_analysis;
 
 import static com.parvin.midi_analysis.FilenameUtils.filenameHasExtension;
+import static com.parvin.midi_analysis.SessionHandler.TEMP_DIRECTORY_PATH;
+import static com.parvin.midi_analysis.SessionHandler.UPLOADED_MIDI_FILES_SET;
 import static com.parvin.midi_analysis.StaticStrings.MESSAGE;
-import static com.parvin.midi_analysis.StaticStrings.TEMP_DIRECTORY;
-import static com.parvin.midi_analysis.StaticStrings.UPLOADED_FILES;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,12 +29,12 @@ public class FileUploadController {
 			@RequestParam("file") MultipartFile file, 
 			RedirectAttributes redirectAttributes) {
 		@SuppressWarnings("unchecked")
-		Set<File> uploadedFiles = (Set<File>) session.getAttribute(UPLOADED_FILES);
-		Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY);
+		Set<Path> uploadedFiles = (Set<Path>) session.getAttribute(UPLOADED_MIDI_FILES_SET);
+		Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY_PATH);
 		String originalFilename = file.getOriginalFilename();
 		if (filenameHasExtension(originalFilename, "mid", "midi")) {
 			try {
-				File uploadedFile = tempDirectory.resolve(file.getOriginalFilename()).toFile();
+				Path uploadedFile = tempDirectory.resolve(file.getOriginalFilename());
 				file.transferTo(uploadedFile);
 				uploadedFiles.add(uploadedFile);
 				redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded file successfully!");
@@ -50,9 +50,9 @@ public class FileUploadController {
 					paths.filter(path -> path.getNameCount() > 0 // Filter out the root element.
 							&& (filenameHasExtension(path.getFileName().toString(), "mid", "midi")))
 					.forEach(path -> {
-						File uploadedFile = tempDirectory.resolve(path.getFileName().toString()).toFile();
+						Path uploadedFile = tempDirectory.resolve(path.getFileName().toString());
 						try {
-							Files.copy(path, uploadedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+							Files.copy(path, uploadedFile, StandardCopyOption.REPLACE_EXISTING);
 							uploadedFiles.add(uploadedFile);
 						} catch (IOException e) {
 							e.printStackTrace();
