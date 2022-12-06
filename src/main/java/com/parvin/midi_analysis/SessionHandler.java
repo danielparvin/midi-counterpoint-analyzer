@@ -31,6 +31,9 @@ public class SessionHandler {
 	public static final String HISTOGRAM_BIN_SIZE_INT = "histogramBinSize";
 	public static final String TEMP_DIRECTORY_PATH = "tempDirectory";
 	public static final String UPLOADED_MIDI_FILES_SET = "uploadedFiles";
+	public static final String TOTAL_CONTRARY_EVENTS_LONG = "totalContraryEvents";
+	public static final String TOTAL_OBLIQUE_EVENTS_LONG = "totalObliqueEvents";
+	public static final String TOTAL_SIMILAR_EVENTS_LONG = "totalSimilarEvents";
 	
 	@Bean
 	public HttpSessionEventPublisher httpSessionEventPublisher() {

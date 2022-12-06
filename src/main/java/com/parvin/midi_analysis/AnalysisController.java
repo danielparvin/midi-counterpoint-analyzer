@@ -3,6 +3,9 @@ package com.parvin.midi_analysis;
 import static com.parvin.midi_analysis.SessionHandler.COUNTERPOINT_ANALYSES_LIST;
 import static com.parvin.midi_analysis.SessionHandler.COUNTERPOINT_HISTOGRAM_PNG_PATH;
 import static com.parvin.midi_analysis.SessionHandler.HISTOGRAM_BIN_SIZE_INT;
+import static com.parvin.midi_analysis.SessionHandler.TOTAL_CONTRARY_EVENTS_LONG;
+import static com.parvin.midi_analysis.SessionHandler.TOTAL_OBLIQUE_EVENTS_LONG;
+import static com.parvin.midi_analysis.SessionHandler.TOTAL_SIMILAR_EVENTS_LONG;
 import static com.parvin.midi_analysis.SessionHandler.UPLOADED_MIDI_FILES_SET;
 
 import java.awt.image.BufferedImage;
@@ -32,9 +35,30 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.parvin.midi_analysis.counterpoint.Analysis;
 import com.parvin.midi_analysis.counterpoint.Analyzer;
 import com.parvin.midi_analysis.counterpoint.CounterpointHistogramMaker;
+import com.parvin.midi_analysis.counterpoint.Reporter;
+import com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion;
 
 @Controller
 public class AnalysisController {
+	@GetMapping("/analysis/histogram")
+	@ResponseBody
+	public ResponseEntity<byte[]> getImage(HttpSession session) {
+		Path histogramPath = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_PNG_PATH);
+		if (!histogramPath.toFile().exists()) {
+			return new ResponseEntity<>(null, null, HttpStatus.NOT_FOUND);
+		}
+		try {
+			byte[] imageBytes = Files.readAllBytes(histogramPath);
+			HttpHeaders headers = new HttpHeaders();
+		    headers.setContentType(MediaType.IMAGE_PNG); 
+		    headers.setContentLength(imageBytes.length);
+		    return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	@GetMapping("/image/{filename}")
 	@ResponseBody
 	public ResponseEntity<byte[]> getImage(HttpSession session, @PathVariable String filename) {
@@ -47,10 +71,10 @@ public class AnalysisController {
 			HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.IMAGE_PNG); 
 		    headers.setContentLength(imageBytes.length);
-		    return new ResponseEntity<byte[]>(imageBytes, headers, HttpStatus.OK);
+		    return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
 		} catch (IOException e) {
 			e.printStackTrace();
-			return new ResponseEntity<byte[]>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
@@ -68,6 +92,7 @@ public class AnalysisController {
 			}
 		}
 		session.setAttribute(COUNTERPOINT_ANALYSES_LIST, analyses);
+		recordAnalysisStatsInSession(session, analyses);
 		int binSize = (int) session.getAttribute(HISTOGRAM_BIN_SIZE_INT);
 		CounterpointHistogramMaker counterpointHistogramMaker = new CounterpointHistogramMaker(analyses, binSize);
 		JFreeChart histogram = counterpointHistogramMaker.generateNormalizedHistogram();
@@ -80,5 +105,20 @@ public class AnalysisController {
 			e.printStackTrace();
 		}
 		return "analysis";
+	}
+	
+	private void recordAnalysisStatsInSession(HttpSession session, List<Analysis> analyses) {
+		long numberOfContraryMotionEvents = 0L;
+		long numberOfSimilarMotionEvents = 0L;
+		long numberOfObliqueMotionEvents = 0L;
+		for (Analysis analysis : analyses) {
+			Reporter reporter = new Reporter(analysis);
+			numberOfContraryMotionEvents += reporter.countMotionEventsOfType(ContrapuntalMotion.CONTRARY);
+			numberOfSimilarMotionEvents += reporter.countMotionEventsOfType(ContrapuntalMotion.SIMILAR);
+			numberOfObliqueMotionEvents += reporter.countMotionEventsOfType(ContrapuntalMotion.OBLIQUE);
+		}
+		session.setAttribute(TOTAL_CONTRARY_EVENTS_LONG, numberOfContraryMotionEvents);
+		session.setAttribute(TOTAL_SIMILAR_EVENTS_LONG, numberOfSimilarMotionEvents);
+		session.setAttribute(TOTAL_OBLIQUE_EVENTS_LONG, numberOfObliqueMotionEvents);
 	}
 }
