@@ -5,16 +5,13 @@
 	rel="stylesheet"
 	integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT"
 	crossorigin="anonymous">
+<link href="/css/main.css" rel="stylesheet">
 <title>MIDI Analyzer</title>
 </head>
-
 <body>
-	<header th:fragment="header">
-		<h1>MIDI Analyzer</h1>
+	<header th:fragment="header" class="text-center">
+		<h1><a href="/" class="text-reset text-decoration-none">MIDI Analyzer</a></h1>
 	</header>
-
-	<button th:fragment="analyze-btn" onclick="analyze()">Analyze</button>
-
 	<div th:fragment="analyze">
 		<button th:replace="this :: analyze-btn">Analyze</button>
 	</div>
@@ -42,9 +39,7 @@
 		<form th:replace="this :: upload-form"></form>
 		another .midi, .mid, or .zip file.
 	</div>
-
-	<div th:fragment="or">OR</div>
-
+	
 	<div th:fragment="analyze"></div>
 
 	<footer th:fragment="footer">&copy; 2022 Daniel Parvin</footer>

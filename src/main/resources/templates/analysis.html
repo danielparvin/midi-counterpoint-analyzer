@@ -1,20 +1,23 @@
+<!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" lang="en">
 <head th:replace="fragments :: head"></head>
 <body>
 	<header th:replace="fragments :: header"></header>
-	<div th:inline="text" id="analysis-summary">
-		Total Contrary Motion Events: [[${session.totalContraryEvents}]]<br>
-		Total Similar Motion Events: [[${session.totalSimilarEvents}]]<br>
-		Total Oblique Motion Events: [[${session.totalObliqueEvents}]]
-	</div>
-	<div id="histogram">
-		<img src="/analysis/histogram">
-	</div>
-	<div th:inline="text" id="files-analyzed">
-		Files analyzed:<br>
-		<ul>
-			<li th:each="file : ${session.uploadedFiles}" th:text="${file.getFileName}"></li>
-		</ul>
+	<div class="container main">
+		<div th:inline="text" id="analysis-summary">
+			Total Contrary Motion Events: [[${session.totalContraryEvents}]]<br>
+			Total Similar Motion Events: [[${session.totalSimilarEvents}]]<br>
+			Total Oblique Motion Events: [[${session.totalObliqueEvents}]]
+		</div>
+		<div id="histogram">
+			<img src="/analysis/histogram" class="img-fluid">
+		</div>
+		<div th:inline="text" id="files-analyzed">
+			Files analyzed:<br>
+			<ul>
+				<li th:each="file : ${session.uploadedFiles}" th:text="${file.getFileName}"></li>
+			</ul>
+		</div>
 	</div>
 	<footer th:replace="fragments :: footer"></footer>
 </body>
