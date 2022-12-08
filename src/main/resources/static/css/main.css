@@ -1,11 +1,3 @@
-:root {
-	--silver-chalice: #B2B3B3ff;
-	--kombu-green: #314733ff;
-	--coffee: #7D5542ff;
-	--silver: #C6C6C3ff;
-	--light-gray: #D3D8D8ff;
-}
-
 body {
 	background-color: var(--bs-gray-100);
 	color: var(--bs-gray-dark);
@@ -20,13 +12,7 @@ footer {
 }
 
 .main {
-	
 }
 
 #analysis-summary {
-	
-}
-
-#or {
-	color: var(--kombu-green);
 }

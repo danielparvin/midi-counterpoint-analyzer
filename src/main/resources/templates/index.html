@@ -5,10 +5,18 @@
 	<header th:replace="fragments :: header"></header>
 	<div class="container main">
 		<div th:if="${message}" id="message" class="alert alert-success" role="alert" th:text="${message}"></div>
-		<div th:replace="${#lists.isEmpty(session.uploadedFiles)} ? ~{} : ~{fragments :: uploaded-files}"></div>
-		<div th:replace="${#lists.isEmpty(session.uploadedFiles)} ? ~{fragments :: upload} : ~{fragments :: another-upload}"></div>
-		<div id="or"><em>OR</em></div>
-		<div><a href="/analysis">Analyze!</a></div>
+		<div th:if="${#lists.isEmpty(session.uploadedFiles)}">Upload a .midi, .mid, or .zip file for analysis!</div>
+		<div th:unless="${#lists.isEmpty(session.uploadedFiles)}">Upload another .midi, .mid, or .zip file, <em>or</em> <a href="/analysis">analyze</a> the uploaded files!</div>
+		<form method="POST" enctype="multipart/form-data" action="/upload">
+		<input type="file" name="file" /> <input type="submit" value="Upload" />
+		<div th:if="${#lists.isEmpty(session.uploadedFiles)}">No files uploaded.</div>
+		<div th:unless="${#lists.isEmpty(session.uploadedFiles)}">
+			Files uploaded:
+			<ul>
+				<li th:each="file : ${session.uploadedFiles}" th:text="${file.getFileName}"></li>
+			</ul>
+		</div>
+	</form>
 	</div>
 	<footer th:replace="fragments :: footer"></footer>
 </body>

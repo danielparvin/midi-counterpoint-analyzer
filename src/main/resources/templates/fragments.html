@@ -12,36 +12,6 @@
 	<header th:fragment="header" class="text-center">
 		<h1><a href="/" class="text-reset text-decoration-none">MIDI Analyzer</a></h1>
 	</header>
-	<div th:fragment="analyze">
-		<button th:replace="this :: analyze-btn">Analyze</button>
-	</div>
-
-	<form th:fragment="upload-form" method="POST"
-		enctype="multipart/form-data" action="/upload">
-		<input type="file" name="file" /> <input type="submit" value="Upload" />
-		</td>
-	</form>
-
-	<div th:fragment="uploaded-files"
-		th:if="${!#lists.isEmpty(session.uploadedFiles)}">
-		<div th:each="file: ${session.uploadedFiles}">
-			<div th:text=${file.toString}></div>
-		</div>
-
-	</div>
-
-	<div th:fragment="upload">
-		<form th:replace="this :: upload-form"></form>
-		a .midi, .mid, or .zip file.
-	</div>
-
-	<div th:fragment="another-upload">
-		<form th:replace="this :: upload-form"></form>
-		another .midi, .mid, or .zip file.
-	</div>
-	
-	<div th:fragment="analyze"></div>
-
 	<footer th:fragment="footer">&copy; 2022 Daniel Parvin</footer>
 </body>
 </html>
