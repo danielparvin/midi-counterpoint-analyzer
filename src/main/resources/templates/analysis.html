@@ -4,10 +4,13 @@
 <body>
 	<header th:replace="fragments :: header"></header>
 	<div class="container main">
-		<div th:inline="text" id="analysis-summary">
-			Total Contrary Motion Events: [[${session.totalContraryEvents}]]<br>
-			Total Similar Motion Events: [[${session.totalSimilarEvents}]]<br>
-			Total Oblique Motion Events: [[${session.totalObliqueEvents}]]
+		<div id="analysis-summary">
+			<table th:inline="text">
+				<tr><td>Total Contrary Motion Events: </td><td>[[${session.totalContraryEvents}]]</td></tr>
+				<tr><td>Total Similar Motion Events: </td><td>[[${session.totalSimilarEvents}]]</td></tr>
+				<tr><td>Total Oblique Motion Events: </td><td>[[${session.totalObliqueEvents}]]</td></tr>
+			</table>
+			<img src="/analysis/pie-chart" class="img-fluid">
 		</div>
 		<div id="histogram">
 			<img src="/analysis/histogram" class="img-fluid">

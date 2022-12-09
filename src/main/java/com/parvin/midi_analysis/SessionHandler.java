@@ -25,15 +25,16 @@ public class SessionHandler {
 	private static final int DEFAULT_HISTOGRAM_BIN_SIZE = 10;
 	
 	// Session attribute names
-	public static final String COUNTERPOINT_ANALYSES_LIST = "counterpointAnalyses";
+	public static final String COUNTERPOINT_ANALYSES_LIST = "counterpointAnalyses"; // TODO Make enums?
 	public static final String COUNTERPOINT_HISTOGRAM_CSV_PATH = "counterpointHistogramCsv";
 	public static final String COUNTERPOINT_HISTOGRAM_PNG_PATH = "counterpointHistogramPng";
+	public static final String COUNTERPOINT_PIE_CHART_PNG_PATH = "counterpointPieChartPng";
 	public static final String HISTOGRAM_BIN_SIZE_INT = "histogramBinSize";
 	public static final String TEMP_DIRECTORY_PATH = "tempDirectory";
-	public static final String UPLOADED_MIDI_FILES_SET = "uploadedFiles";
 	public static final String TOTAL_CONTRARY_EVENTS_LONG = "totalContraryEvents";
 	public static final String TOTAL_OBLIQUE_EVENTS_LONG = "totalObliqueEvents";
 	public static final String TOTAL_SIMILAR_EVENTS_LONG = "totalSimilarEvents";
+	public static final String UPLOADED_MIDI_FILES_SET = "uploadedFiles";
 	
 	@Bean
 	public HttpSessionEventPublisher httpSessionEventPublisher() {
@@ -54,6 +55,8 @@ public class SessionHandler {
 				session.setAttribute(COUNTERPOINT_HISTOGRAM_CSV_PATH, counterpointHistogramCsv);
 				Path counterpointHistogramPng = Files.createTempFile(tempDirectory, "counterpoint-histogram", ".png");
 				session.setAttribute(COUNTERPOINT_HISTOGRAM_PNG_PATH, counterpointHistogramPng);
+				Path counterpointPieChartPng = Files.createTempFile(tempDirectory, "counterpoint-pie-chart", ".png");
+				session.setAttribute(COUNTERPOINT_PIE_CHART_PNG_PATH, counterpointPieChartPng);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -75,10 +78,12 @@ public class SessionHandler {
 			}
 			Path counterpointHistogramCsv = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_CSV_PATH);			
 			Path counterpointHistogramPng = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_PNG_PATH);
+			Path counterpointPieChartPng = (Path) session.getAttribute(COUNTERPOINT_PIE_CHART_PNG_PATH);
 			Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY_PATH);
 			try {
 				Files.deleteIfExists(counterpointHistogramCsv);
 				Files.deleteIfExists(counterpointHistogramPng);
+				Files.deleteIfExists(counterpointPieChartPng);
 				Files.deleteIfExists(tempDirectory);
 			} catch (IOException e) {
 				e.printStackTrace();
