@@ -58,7 +58,7 @@ public class HistogramDataset {
 		for (int binNumber = 0; binNumber < frequencyData.length; binNumber++) {
 			double xLow = binNumber * binSize + minValue;
 			double xHigh = Math.min((binNumber + 1) * binSize + minValue, maxValue);
-			double xMid = xLow + xHigh / 2.0;
+			double xMid = (xLow + xHigh) / 2.0;
 			double y = getFrequencyAtBin(binNumber);
 			xyIntervalSeries.add(xMid, xLow, xHigh, y, y, y);
 		}

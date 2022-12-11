@@ -125,12 +125,10 @@ public class AnalysisController {
 		int seriesCount = histogram.getXYPlot().getDataset().getSeriesCount();
 		for (int seriesNumber = 0; seriesNumber < seriesCount; seriesNumber++) {
 			String seriesKey = (String) histogram.getXYPlot().getDataset().getSeriesKey(seriesNumber);
-			System.out.println("Series: " + seriesKey);
 			int itemCount = histogram.getXYPlot().getDataset().getItemCount(seriesNumber);
 			for (int itemNumber = 0; itemNumber < itemCount; itemNumber++) {
 				double x = histogram.getXYPlot().getDataset().getXValue(seriesNumber, itemNumber);
 				double y = histogram.getXYPlot().getDataset().getYValue(seriesNumber, itemNumber);
-				System.out.println("X: " + x + ". Y: " + y + ".");
 			}
 		}
 	}

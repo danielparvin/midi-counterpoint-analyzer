@@ -1,59 +1,78 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" lang="en">
-<head th:replace="fragments :: head"></head>
+<head th:replace="fragments :: head">
+<title>MIDI Analyzer</title>
+</head>
 <body>
 	<header th:replace="fragments :: header"></header>
-	<div class="container main">
-		<div th:if="${message}" id="message" class="alert alert-success"
-			role="alert" th:text="${message}"></div>
+	<div class="container main pt-3">
 		<div class="upload-form">
 			<div th:if="${#lists.isEmpty(session.uploadedFiles)}">
 				<h2>Upload a .midi, .mid, or .zip file for analysis!</h2>
 			</div>
 			<div th:unless="${#lists.isEmpty(session.uploadedFiles)}">
 				<h2>
-					Upload another .midi, .mid, or .zip file, <em>or</em> <a
+					Upload another MIDI file, <em>or</em> <a
 						href="/analysis">analyze</a> the uploaded files!
 				</h2>
 			</div>
-			<form method="POST" enctype="multipart/form-data" action="/upload">
-				<input type="file" name="file" accept=".mid, .midi, .zip" /> <input
-					type="submit" value="Upload" />
+			<form method="POST" enctype="multipart/form-data" action="/upload"
+				id="upload-form">
+				<div class="input-group">
+					<input type="file" name="file" accept=".mid, .midi, .zip"
+						class="form-control" id="inputGroupFile01"
+						oninput="document.getElementById('upload-form').submit()">
+				</div>
 			</form>
 		</div>
+		<div th:if="${message}" id="message" class="alert alert-success mt-1"
+			role="alert" th:text="${message}"></div>
 		<div th:if="${not #lists.isEmpty(session.uploadedFiles)}"
-			class="uploaded-files">
+			class="uploaded-files pt-2">
 			<h3>Files uploaded:</h3>
 			<ul>
 				<li th:each="file : ${session.uploadedFiles}"
 					th:text="${file.getFileName}"></li>
 			</ul>
 		</div>
-		<div class="info">
-			<p>This tool performs a contrapuntal analysis on the musical
-				voices within a MIDI file. A MIDI file contains information about
-				the musical notes played at specific times. If you've ever played
-				Guitar Hero, you can think of a MIDI file Pellentesque congue
-				condimentum suscipit. Donec dignissim pharetra rhoncus. Aliquam id
-				consequat lectus. Mauris vel laoreet sapien. Integer ac consequat
-				nibh. Nulla ac ornare mauris. Pellentesque congue condimentum
-				suscipit. Donec dignissim pharetra rhoncus. Aliquam id consequat
-				lectus. Mauris vel laoreet sapien. Integer ac consequat nibh. Nulla
-				ac ornare mauris. Pellentesque congue condimentum suscipit. Donec
-				dignissim pharetra rhoncus. Aliquam id consequat lectus. Mauris vel
-				laoreet sapien. Integer ac consequat nibh. Nulla ac ornare mauris.
-				Pellentesque congue condimentum suscipit. Donec dignissim pharetra
-				rhoncus. Aliquam id consequat lectus. Mauris vel laoreet sapien.
-				Integer ac consequat nibh. Nulla ac ornare mauris.</p>
-
-			<div class="embed-responsive embed-responsive-1by1 d-flex justify-content-center">
-				<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/fRKBpKuFfTE"
-					width="640" height="360"
-					title="YouTube video player"
+		<div class="info pt-2">
+			<figure class="float-end mx-1"><img src="/images/midi-visualization.png" width="200" height="139"
+				alt="A visual representation of a MIDI file">
+				<figcaption class="figure-caption text-center">Visualization of a MIDI file</figcaption></figure>
+			<p>This tool performs a counterpoint analysis on the musical
+				"voices" within a MIDI file. A MIDI file contains information about
+				the musical notes played at specific times. For example, it might
+				specify that a certain Bb occurs at such and such time in a piece of
+				music, and a certain F# occurs at other specific times. Although
+				MIDI is not an audio file format, MIDI files represent when specific
+				notes should be played. People can play MIDI files on a computer and
+				on many electronic keyboards.</p>
+			<p>In music theory, "counterpoint" refers to the analysis of how
+				musical "voices," or distinct parts or lines, interact with and
+				relate to each other. For example, how does a trumpet part relate to
+				a trombone part, how does a violin part relate to a cello part, or
+				how does a soprano line relate to an alto line? These are the kinds
+				of questions that counterpoint analysis seeks to answer.</p>
+			<p>
+				When two voices play at the same time, they can move in various
+				directions relative to each other. The four types of contrapuntal
+				motion are similar, parallel, oblique, and contrary. If they both
+				move in the same direction, they are said to have <u>"similar"</u>
+				motion. If they both move in the same direction with the same
+				distance (or "interval"), they have <u>"parallel"</u> motion. If one
+				voice remains the same while the other moves up or down, the motion
+				between the two voices is <u>"oblique."</u> And if the two voices
+				move in opposite directions, they exhibit <u>"contrary"</u> motion
+				in that place.
+			</p>
+			<div
+				class="embed-responsive embed-responsive-1by1 d-flex justify-content-center">
+				<iframe class="embed-responsive-item"
+					src="https://www.youtube.com/embed/fRKBpKuFfTE" width="640"
+					height="360" title="YouTube video player"
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 					allowfullscreen></iframe>
 			</div>
-
 		</div>
 	</div>
 	<footer th:replace="fragments :: footer"></footer>

@@ -55,9 +55,8 @@ public class CounterpointHistogramMaker {
 		xyCollection.addSeries(obliqueHistogram.toXYIntervalSeries("Oblique Motion Events"));
 		
 		JFreeChart histogram = ChartFactory.createHistogram("Frequency of Contrapuntal Motion Events", "% Total Length", 
-				"Number of Events", null, PlotOrientation.VERTICAL, true, false, false);
-		// histogram.getXYPlot().getDomainAxis().setRange(0.0, 100.0);
-		histogram.getXYPlot().setDataset(xyCollection);
+				"Number of Events", xyCollection, PlotOrientation.VERTICAL, true, false, false);
+		histogram.getXYPlot().getDomainAxis().setRange(0.0, 100.0);
 		return histogram;
 	}
 }

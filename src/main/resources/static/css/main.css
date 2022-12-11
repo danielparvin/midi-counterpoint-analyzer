@@ -6,7 +6,6 @@ body {
 header {
 	background-color: #227bff;
 	color: var(--bs-gray-100);
-	padding: 2px 0;
 }
 
 footer {
@@ -14,7 +13,5 @@ footer {
 }
 
 .main {
-}
-
-#analysis-summary {
+	text-align: justify;
 }
