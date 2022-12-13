@@ -11,7 +11,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpSession;
@@ -47,17 +49,22 @@ public class FileUploadController {
 				File zipFile = tempDirectory.resolve(file.getOriginalFilename()).toFile();
 				file.transferTo(zipFile);
 				try (Stream<Path> paths = Files.walk(FileSystems.newFileSystem(zipFile.toPath()).getPath("/"))) {
-					paths.filter(path -> path.getNameCount() > 0 // Filter out the root element.
+					List<Path> midiPaths = paths.filter(path -> path.getNameCount() > 0 // Filter out the root element.
 							&& (filenameHasExtension(path.getFileName().toString(), "mid", "midi")))
-					.forEach(path -> {
-						Path uploadedFile = tempDirectory.resolve(path.getFileName().toString());
+					.collect(Collectors.toList());
+					if (midiPaths.isEmpty()) {
+						redirectAttributes.addFlashAttribute(MESSAGE, "No MIDI file found in ZIP file!");
+						return "redirect:/";
+					}
+					for (Path midiPath : midiPaths) {
+						Path uploadedFile = tempDirectory.resolve(midiPath.getFileName().toString());
 						try {
-							Files.copy(path, uploadedFile, StandardCopyOption.REPLACE_EXISTING);
+							Files.copy(midiPath, uploadedFile, StandardCopyOption.REPLACE_EXISTING);
 							uploadedFiles.add(uploadedFile);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-					});
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
