@@ -25,7 +25,7 @@ public class SessionHandler {
 	private static final int DEFAULT_HISTOGRAM_BIN_SIZE = 10;
 	
 	// Session attribute names
-	public static final String COUNTERPOINT_ANALYSES_LIST = "counterpointAnalyses"; // TODO Make enums?
+	public static final String COUNTERPOINT_ANALYSES_LIST = "counterpointAnalyses";
 	public static final String COUNTERPOINT_HISTOGRAM_CSV_PATH = "counterpointHistogramCsv";
 	public static final String COUNTERPOINT_HISTOGRAM_PNG_PATH = "counterpointHistogramPng";
 	public static final String COUNTERPOINT_PIE_CHART_PNG_PATH = "counterpointPieChartPng";
