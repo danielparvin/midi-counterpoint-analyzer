@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -121,16 +123,18 @@ public class AnalysisController {
 		return "analysis";
 	}
 	
-	private void saveHistogramCsvInSession(HttpSession session, JFreeChart histogram) { // TODO
+	private void saveHistogramCsvInSession(HttpSession session, JFreeChart histogram) {
+		Map<Double, Double> eventsForBin = new HashMap<>();
 		int seriesCount = histogram.getXYPlot().getDataset().getSeriesCount();
 		for (int seriesNumber = 0; seriesNumber < seriesCount; seriesNumber++) {
-			String seriesKey = (String) histogram.getXYPlot().getDataset().getSeriesKey(seriesNumber);
 			int itemCount = histogram.getXYPlot().getDataset().getItemCount(seriesNumber);
 			for (int itemNumber = 0; itemNumber < itemCount; itemNumber++) {
 				double x = histogram.getXYPlot().getDataset().getXValue(seriesNumber, itemNumber);
 				double y = histogram.getXYPlot().getDataset().getYValue(seriesNumber, itemNumber);
+				eventsForBin.merge(x, y, Double::sum);
 			}
 		}
+		// TODO Write and save the CSV file.
 	}
 
 	private void savePieChartInSession(HttpSession session) {

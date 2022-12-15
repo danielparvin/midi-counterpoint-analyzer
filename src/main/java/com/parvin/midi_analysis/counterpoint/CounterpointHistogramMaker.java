@@ -3,11 +3,13 @@ package com.parvin.midi_analysis.counterpoint;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.ClusteredXYBarRenderer;
 import org.jfree.data.xy.XYIntervalSeriesCollection;
 
 import com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion;
@@ -31,32 +33,39 @@ public class CounterpointHistogramMaker {
 			final long totalTicks = analysis.getTicks();
 			List<NormalizedMotionEvent> normalizedMotionEvents = analysis.getMotionEvents().stream()
 					.map(event -> new NormalizedMotionEvent(event.getMotion(), event.getTick(), totalTicks))
-					.collect(Collectors.toList());
+					.toList();
 			for (NormalizedMotionEvent normalizedEvent: normalizedMotionEvents) {
 				ContrapuntalMotion motionType = normalizedEvent.getMotion();
 				switch(motionType) {
-				case CONTRARY: 
-					contraryHistogram.addObservation(normalizedEvent.getNormalizedTiming());
-					break;
-				case PARALLEL:
-				case SIMILAR:
-					similarHistogram.addObservation(normalizedEvent.getNormalizedTiming());
-					break;
-				case OBLIQUE:
-					obliqueHistogram.addObservation(normalizedEvent.getNormalizedTiming());
-					break;
+					case CONTRARY: 
+						contraryHistogram.addObservation(normalizedEvent.getNormalizedTiming());
+						break;
+					case PARALLEL, SIMILAR:
+						similarHistogram.addObservation(normalizedEvent.getNormalizedTiming());
+						break;
+					case OBLIQUE:
+						obliqueHistogram.addObservation(normalizedEvent.getNormalizedTiming());
+						break;
 				}
 			}
 		}
-		
+
 		XYIntervalSeriesCollection xyCollection = new XYIntervalSeriesCollection();
 		xyCollection.addSeries(contraryHistogram.toXYIntervalSeries("Contrary Motion Events"));
 		xyCollection.addSeries(similarHistogram.toXYIntervalSeries("Similar Motion Events"));
 		xyCollection.addSeries(obliqueHistogram.toXYIntervalSeries("Oblique Motion Events"));
-		
-		JFreeChart histogram = ChartFactory.createHistogram("Frequency of Contrapuntal Motion Events", "% Total Length", 
-				"Number of Events", xyCollection, PlotOrientation.VERTICAL, true, false, false);
-		histogram.getXYPlot().getDomainAxis().setRange(0.0, 100.0);
+
+		NumberAxis xAxis = new NumberAxis("% Total Length");
+		xAxis.setRange(0.0, 100.0);
+		NumberAxis yAxis = new NumberAxis("Number of Events");
+		XYPlot plot = new XYPlot(xyCollection, xAxis, yAxis, new ClusteredXYBarRenderer());
+		plot.setOrientation(PlotOrientation.VERTICAL);
+		boolean showLegend = false;
+		JFreeChart histogram = new JFreeChart("Frequency of Contrapuntal Motion Events", 
+				JFreeChart.DEFAULT_TITLE_FONT,
+				plot, 
+				showLegend);
+		new StandardChartTheme("JFree").apply(histogram);
 		return histogram;
 	}
 }
