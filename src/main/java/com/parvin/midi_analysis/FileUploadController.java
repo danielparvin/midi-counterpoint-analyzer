@@ -65,7 +65,7 @@ public class FileUploadController {
 			try (Stream<Path> paths = Files.walk(FileSystems.newFileSystem(zipFile.toPath()).getPath("/"))) {
 				List<Path> midiPaths = paths.filter(path -> path.getNameCount() > 0 // Filter out the root element.
 						&& (filenameHasExtension(path.getFileName().toString(), "mid", "midi")))
-				.collect(Collectors.toList());
+				.toList();
 				if (midiPaths.isEmpty()) {
 					redirectAttributes.addFlashAttribute(MESSAGE, "No MIDI file found in ZIP file!");
 					return;
@@ -76,7 +76,7 @@ public class FileUploadController {
 						Files.copy(midiPath, uploadedFile, StandardCopyOption.REPLACE_EXISTING);
 						uploadedFiles.add(uploadedFile);
 					} catch (IOException e) {
-						e.printStackTrace();
+						e.printStackTrace(); // TODO Handle IOException properly.
 					}
 				}
 			}

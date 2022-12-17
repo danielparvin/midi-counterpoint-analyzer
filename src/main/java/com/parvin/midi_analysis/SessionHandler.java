@@ -34,7 +34,7 @@ public class SessionHandler {
 	public static final String TOTAL_CONTRARY_EVENTS_LONG = "totalContraryEvents";
 	public static final String TOTAL_OBLIQUE_EVENTS_LONG = "totalObliqueEvents";
 	public static final String TOTAL_SIMILAR_EVENTS_LONG = "totalSimilarEvents";
-	public static final String UPLOADED_MIDI_FILES_SET = "uploadedFiles";
+	public static final String UPLOADED_MIDI_FILES_SET = "uploadedFiles"; // TODO Refactor to use a List instead, for more advanced file-selection analysis options.
 	
 	@Bean
 	public HttpSessionEventPublisher httpSessionEventPublisher() {

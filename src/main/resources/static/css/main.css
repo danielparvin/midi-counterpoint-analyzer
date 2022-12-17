@@ -1,15 +1,42 @@
+:root {
+	--app-red: #ff1e1e;
+	--app-green: #198754;
+	--app-blue: #227bff;
+}
+
 body {
 	background-color: var(--bs-gray-100);
 	color: var(--bs-gray-dark);
 }
 
 header {
-	background-color: #227bff;
+	background-color: var(--app-blue);
 	color: var(--bs-gray-100);
 }
 
 footer {
 	text-align: center;
+}
+
+figcaption {
+	text-align: center;
+}
+
+td {
+	padding-left: 0.2rem;
+	padding-right: 0.2rem;
+}
+
+.red {
+	color: var(--app-red);
+}
+
+.green {
+	color: var(--app-green);
+}
+
+.blue {
+	color: var(--app-blue);
 }
 
 .main {

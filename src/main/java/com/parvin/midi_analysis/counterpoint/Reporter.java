@@ -51,6 +51,6 @@ public class Reporter {
 		return analysis.getMotionEvents()
 				.stream()
 				.filter(e -> e.getTick() >= firstTick && e.getTick() <= lastTick)
-				.collect(Collectors.toList());
+				.toList();
 	}
 }

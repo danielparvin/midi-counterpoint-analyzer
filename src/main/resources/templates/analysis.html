@@ -4,22 +4,29 @@
 <body>
 	<header th:replace="fragments :: header"></header>
 	<div class="container main pt-3">
-		<h2 class="text-center">Breakdown of Contrapuntal Motion Events</h2>
+		<h2 class="text-center">Analysis</h2>
+		<h3 class="text-center">Breakdown of Contrapuntal Motion Events</h3>
 		<div id="analysis-summary" class="row">
 			<div class="col">
-				<img src="/analysis/pie-chart" width="300px" height="300px" class="float-end">
+				<figure class="float-end">
+					<figcaption class="figure-caption">Total Motion Events</figcaption>
+					<img src="/analysis/pie-chart" width="300px" height="300px">
+				</figure>
 			</div>
 			<div class="col my-auto">
 				<table th:inline="text">
 					<tr>
+						<td><span class="red">&#9632;</span></td>
 						<td>Total Contrary Motion Events:</td>
 						<td>[[${session.totalContraryEvents}]]</td>
 					</tr>
 					<tr>
+						<td><span class="blue">&#9632;</span></td>
 						<td>Total Similar Motion Events:</td>
 						<td>[[${session.totalSimilarEvents}]]</td>
 					</tr>
 					<tr>
+						<td><span class="green">&#9632;</span></td>
 						<td>Total Oblique Motion Events:</td>
 						<td>[[${session.totalObliqueEvents}]]</td>
 					</tr>
@@ -27,10 +34,11 @@
 			</div>
 		</div>
 		<div id="histogram">
+			<h3 class="text-center">Histogram of Contrapuntal Motion Events</h3>
 			<img src="/analysis/histogram" class="img-fluid">
 		</div>
 		<div th:inline="text" id="files-analyzed">
-			Files analyzed:<br>
+			<h3>Files analyzed:</h3>
 			<ul>
 				<li th:each="file : ${session.uploadedFiles}"
 					th:text="${file.getFileName}"></li>
