@@ -13,7 +13,7 @@
 			<div th:unless="${#lists.isEmpty(session.uploadedFiles)}">
 				<h2>
 					Upload another MIDI file, <em>or</em> <a
-						href="/analysis">analyze</a> the uploaded files!
+						href="/analyze">analyze</a> the uploaded files!
 				</h2>
 			</div>
 			<form method="POST" enctype="multipart/form-data" action="/upload"
@@ -41,17 +41,16 @@
 				<figcaption class="figure-caption text-center">Visualization of a MIDI file</figcaption></figure>
 			<p>This tool performs a counterpoint analysis on the musical
 				"voices" within a MIDI file. A MIDI file contains information about
-				the musical notes played at specific times. For example, it might
-				specify that a certain Bb occurs at such and such time in a piece of
-				music, and a certain F# occurs at other specific times. Although
-				MIDI is not an audio file format, MIDI files represent when specific
-				notes should be played. People can play MIDI files on a computer and
+				the musical notes played at specific times. It
+				specifies when each note occurs throughout a piece of
+				music. Although
+				MIDI is not an audio file format, you can play MIDI files on a computer and
 				on many electronic keyboards.</p>
 			<p>In music theory, "counterpoint" refers to the analysis of how
 				musical "voices," or distinct parts or lines, interact with and
 				relate to each other. For example, how does a trumpet part relate to
-				a trombone part, how does a violin part relate to a cello part, or
-				how does a soprano line relate to an alto line? These are the kinds
+				a trombone part, or how does a violin part relate to a cello part? 
+				When the violin notes go up, do the cello notes go down? These are the kinds
 				of questions that counterpoint analysis seeks to answer.</p>
 			<p>
 				When two voices play at the same time, they can move in various
@@ -65,7 +64,8 @@
 				move in opposite directions, they exhibit <u>"contrary"</u> motion
 				in that place.
 			</p>
-			<div
+			<!-- Add the following section after completing the project and recording a video about it. -->
+			<!-- <div
 				class="embed-responsive embed-responsive-1by1 d-flex justify-content-center">
 				<iframe class="embed-responsive-item"
 					src="https://www.youtube.com/embed/fRKBpKuFfTE" width="640"
@@ -73,6 +73,7 @@
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 					allowfullscreen></iframe>
 			</div>
+			 -->
 		</div>
 	</div>
 	<footer th:replace="fragments :: footer"></footer>
