@@ -17,7 +17,8 @@
 			<div class="col">
 				<figure class="float-end">
 					<figcaption class="figure-caption">Total Motion Events</figcaption>
-					<img src="/analysis/pie-chart" width="300px" height="300px">
+					<img src="/analysis/pie-chart" width="300px" height="300px" 
+					alt="Pie chart of contrapuntal motion events.">
 				</figure>
 			</div>
 			<div class="col my-auto">
@@ -40,9 +41,30 @@
 				</table>
 			</div>
 		</div>
-		<div id="histogram">
-			<h3 class="text-center">Histogram of Contrapuntal Motion Events</h3>
-			<img src="/analysis/histogram" class="img-fluid">
+		<div id="histogram" class="row justify-content-center">
+			<div class="col">
+				<h3 class="text-center">Histogram of Contrapuntal Motion Events</h3>
+				<img src="/analysis/histogram" class="img-fluid d-block mx-auto" 
+				alt="Histogram chart of contrapuntal motion events.">
+			</div>
+		</div>
+		<div class="upload-form">
+			<div th:if="${#lists.isEmpty(session.uploadedFiles)}">
+				<h2>Upload a .midi, .mid, or .zip file for analysis!</h2>
+			</div>
+			<div th:unless="${#lists.isEmpty(session.uploadedFiles)}">
+				<h2>
+					Upload another MIDI file!
+				</h2>
+			</div>
+			<form method="POST" enctype="multipart/form-data" action="/upload"
+				id="upload-form">
+				<div class="input-group">
+					<input type="file" name="file" accept=".mid, .midi, .zip"
+						class="form-control" id="inputGroupFile01"
+						oninput="document.getElementById('upload-form').submit()">
+				</div>
+			</form>
 		</div>
 	</div>
 	<footer th:replace="fragments :: footer"></footer>

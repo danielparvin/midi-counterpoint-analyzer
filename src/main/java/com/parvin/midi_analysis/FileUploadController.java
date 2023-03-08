@@ -11,15 +11,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,16 +24,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class FileUploadController {
 	public static final String MESSAGE = "message";
-	
-//	@Value("${spring.servlet.multipart.max-file-size}") 
-//	private String maxFileSize;
-//
-//	@ExceptionHandler(SizeLimitExceededException.class) // TODO Find out why this doesn't work!
-//	public String handleSizeLimitExceededException(Exception e, RedirectAttributes redirectAttributes) {
-//		redirectAttributes.addFlashAttribute("message",
-//				"The file exceeds the maximum file size of " + maxFileSize + "!");
-//		return "redirect:/";
-//	}
 	
 	@PostMapping("/upload")
 	public String handleUpload(HttpSession session, 
@@ -54,7 +40,7 @@ public class FileUploadController {
 		} else {
 			redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded file must be a .MID, .MIDI, or .ZIP file!");
 		}
-		return "redirect:/";
+		return "redirect:/analyze";
 	}
 
 	private void handleMidiFile(MultipartFile file, RedirectAttributes redirectAttributes, Set<Path> uploadedFiles,

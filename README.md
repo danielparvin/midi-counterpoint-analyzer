@@ -12,14 +12,16 @@ By uploading a ZIP file containing multiple MIDI files, users can analyze many p
 
 ## Project Status
 In development
-### To-do Items
-- Edit upload behavior to go right to Analysis page.
-- Provide upload section on bottom of Analysis page to upload and analyze other files.
-- Finish styling the Analysis page.
-  - Change colors of pie chart and histogram values.
-- Generate a downloadable CSV file of the pie chart and histogram results.
-- Style the list of uploaded files.
-- Provide a demo MIDI file for users who want to quickly try the app without having to find or download MIDI files themselves.
+### To-do List
+- Finish styling the Analysis page (Wednesday-Friday).
+  - Change colors of pie chart and histogram values (Wednesday).
+  - Provide more delineation between various sections of the page (Thursday).
+  - Style the list of uploaded files (Friday).
+- Generate downloadable CSV files of the pie chart and histogram results (Saturday).
+  - Refactor PNG-generation code (Saturday).
+- Provide a demo MIDI file for users who want to quickly try the app without having to find or download MIDI files themselves (Monday, March 13).
 - Analyze Bach's Two-part Inventions.
-  - Evaluate contrapuntal motion trends in fast vs. slow inventions.
-- Record a demo video, describing and demonstrating the app, the Bach Inventions case study, and the limitations of the algorithm.
+  - Evaluate contrapuntal motion trends in fast vs. slow inventions (Tuesday, March 14).
+- Ask colleagues for feedback (Wednesday, March 15).
+- Incorporate feedback (Monday, March 20).
+- Record a demo video, describing and demonstrating the app, the Bach Inventions case study, and the limitations of the algorithm (Tuesday, March 21).

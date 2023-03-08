@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +53,9 @@ public class AnalysisController {
 	public static final Color RED = new Color(225, 30, 30); // TODO Move this somewhere more appropriate.
 	public static final Color BLUE = new Color(34, 123, 255);
 	public static final Color GREEN = new Color(25, 135, 84);
+	private static final String OBLIQUE_MOTION_EVENTS = "Oblique Motion Events";
+	private static final String SIMILAR_MOTION_EVENTS = "Similar Motion Events";
+	private static final String CONTRARY_MOTION_EVENTS = "Contrary Motion Events";
 
 	@GetMapping("/analysis/csv")
 	@ResponseBody
@@ -78,6 +80,7 @@ public class AnalysisController {
 		if (!histogramPath.toFile().exists()) {
 			return new ResponseEntity<>(null, null, HttpStatus.NOT_FOUND);
 		}
+		
 		try {
 			byte[] imageBytes = Files.readAllBytes(histogramPath);
 			HttpHeaders headers = new HttpHeaders();
@@ -95,6 +98,7 @@ public class AnalysisController {
 		if (!histogramPath.toFile().exists()) {
 			return new ResponseEntity<>(null, null, HttpStatus.NOT_FOUND);
 		}
+		
 		try {
 			byte[] imageBytes = Files.readAllBytes(histogramPath);
 			HttpHeaders headers = new HttpHeaders();
@@ -115,6 +119,7 @@ public class AnalysisController {
 		if (!histogramPath.toFile().exists()) {
 			return new ResponseEntity<>(null, null, HttpStatus.NOT_FOUND);
 		}
+		
 		try {
 			byte[] imageBytes = Files.readAllBytes(histogramPath);
 			HttpHeaders headers = new HttpHeaders();
@@ -133,7 +138,7 @@ public class AnalysisController {
 	}
 
 	@GetMapping("/analyze")
-	public String analyze(HttpSession session) { // TODO Consider adding params for specifying which files to analyze.
+	public String analyze(HttpSession session) {
 		@SuppressWarnings("unchecked")
 		Set<Path> midiFiles = (TreeSet<Path>) session.getAttribute(UPLOADED_MIDI_FILES_SET);
 		List<Analysis> analyses = new ArrayList<>();
@@ -231,15 +236,15 @@ public class AnalysisController {
 			long numSimilarMotionEvents,
 			long numObliqueMotionEvents) {
 		DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
-		dataset.setValue("Contrary Motion Events", numContraryMotionEvents); // TODO Refactor these Strings into constants.
-		dataset.setValue("Similar Motion Events", numSimilarMotionEvents);
-		dataset.setValue("Oblique Motion Events", numObliqueMotionEvents);
+		dataset.setValue(CONTRARY_MOTION_EVENTS, numContraryMotionEvents);
+		dataset.setValue(SIMILAR_MOTION_EVENTS, numSimilarMotionEvents);
+		dataset.setValue(OBLIQUE_MOTION_EVENTS, numObliqueMotionEvents);
 		PiePlot<String> plot = new PiePlot<>(dataset);
 		plot.setLabelGenerator(null);
 		plot.setBackgroundPaint(Color.LIGHT_GRAY);
-		plot.setSectionPaint("Contrary Motion Events", RED);
-		plot.setSectionPaint("Similar Motion Events", BLUE);
-		plot.setSectionPaint("Oblique Motion Events", GREEN);
+		plot.setSectionPaint(CONTRARY_MOTION_EVENTS, RED);
+		plot.setSectionPaint(SIMILAR_MOTION_EVENTS, BLUE);
+		plot.setSectionPaint(OBLIQUE_MOTION_EVENTS, GREEN);
 		JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, false);
 		chart.setBackgroundPaint(Color.WHITE);
 		return chart;

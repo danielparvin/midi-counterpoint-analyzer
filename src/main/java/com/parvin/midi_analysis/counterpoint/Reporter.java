@@ -1,7 +1,6 @@
 package com.parvin.midi_analysis.counterpoint;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion;
 import com.parvin.midi_analysis.counterpoint.events.MotionEvent;
