@@ -50,9 +50,10 @@ import com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion;
 
 @Controller
 public class AnalysisController {
-	public static final Color RED = new Color(225, 30, 30); // TODO Move this somewhere more appropriate.
-	public static final Color BLUE = new Color(34, 123, 255);
-	public static final Color GREEN = new Color(25, 135, 84);
+	public static final Color RED = Color.decode("#ff6347"); // TODO Move this somewhere more appropriate.
+	public static final Color ORANGE = Color.decode("#ff6900");
+	public static final Color BLUE = Color.decode("#227bff");
+	public static final Color GREEN = Color.decode("#00d084");
 	private static final String OBLIQUE_MOTION_EVENTS = "Oblique Motion Events";
 	private static final String SIMILAR_MOTION_EVENTS = "Similar Motion Events";
 	private static final String CONTRARY_MOTION_EVENTS = "Contrary Motion Events";
@@ -152,7 +153,8 @@ public class AnalysisController {
 		}
 		session.setAttribute(COUNTERPOINT_ANALYSES_LIST, analyses);
 		recordAnalysisStatsInSession(session, analyses);
-		savePieChartInSession(session);
+		JFreeChart pieChart = generatePieChartFromSessionMidiFiles(session);
+		writeAndSavePieChartToSession(session, pieChart);
 		int binSize = (int) session.getAttribute(HISTOGRAM_BIN_SIZE_INT);
 		CounterpointHistogramMaker counterpointHistogramMaker = new CounterpointHistogramMaker(analyses, binSize);
 		JFreeChart histogram = counterpointHistogramMaker.generateNormalizedHistogram();
@@ -198,15 +200,8 @@ public class AnalysisController {
 			}
 		}
 	}
-
-	private void savePieChartInSession(HttpSession session) { // TODO Refactor the session saving from the file generation
-		long numContraryMotionEvents = (long) session.getAttribute(TOTAL_CONTRARY_EVENTS_LONG);
-		long numSimilarMotionEvents = (long) session.getAttribute(TOTAL_SIMILAR_EVENTS_LONG);
-		long numObliqueMotionEvents = (long) session.getAttribute(TOTAL_OBLIQUE_EVENTS_LONG);
-		JFreeChart pieChart = getPieChartOf(null,
-				numContraryMotionEvents,
-				numSimilarMotionEvents,
-				numObliqueMotionEvents);
+	
+	private void writeAndSavePieChartToSession(HttpSession session, JFreeChart pieChart) {
 		BufferedImage bufferedImage = pieChart.createBufferedImage(800, 800, null); // TODO Make these variable.
 		File pieChartPng = ((Path) session.getAttribute(COUNTERPOINT_PIE_CHART_PNG_PATH)).toFile();
 		try {
@@ -214,6 +209,13 @@ public class AnalysisController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private JFreeChart generatePieChartFromSessionMidiFiles(HttpSession session) {
+		long numContraryMotionEvents = (long) session.getAttribute(TOTAL_CONTRARY_EVENTS_LONG);
+		long numSimilarMotionEvents = (long) session.getAttribute(TOTAL_SIMILAR_EVENTS_LONG);
+		long numObliqueMotionEvents = (long) session.getAttribute(TOTAL_OBLIQUE_EVENTS_LONG);
+		return getPieChartOf(null, numContraryMotionEvents, numSimilarMotionEvents, numObliqueMotionEvents);
 	}
 
 	private void recordAnalysisStatsInSession(HttpSession session, List<Analysis> analyses) {
@@ -231,7 +233,7 @@ public class AnalysisController {
 		session.setAttribute(TOTAL_OBLIQUE_EVENTS_LONG, numberOfObliqueMotionEvents);
 	}
 
-	public JFreeChart getPieChartOf(String title, // TODO Refactor to make this more modular if possible.
+	private JFreeChart getPieChartOf(String title, // TODO Refactor to make this more modular if possible.
 			long numContraryMotionEvents,
 			long numSimilarMotionEvents,
 			long numObliqueMotionEvents) {

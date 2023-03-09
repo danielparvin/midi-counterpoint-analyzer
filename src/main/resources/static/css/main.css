@@ -1,7 +1,9 @@
 :root {
-	--app-red: #ff1e1e;
-	--app-green: #198754;
+	--app-red: #ff6347;
+	--app-orange: #ff6900;
+	--app-green: #00d084;
 	--app-blue: #227bff;
+	--app-violet: #ee82ee;
 }
 
 body {

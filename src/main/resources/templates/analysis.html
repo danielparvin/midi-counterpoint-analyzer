@@ -5,15 +5,8 @@
 	<header th:replace="fragments :: header"></header>
 	<div class="container main pt-3">
 		<h2 class="text-center">Analysis</h2>
-		<div th:inline="text" id="files-analyzed">
-			<h3>Files analyzed:</h3>
-			<ul>
-				<li th:each="file : ${session.uploadedFiles}"
-					th:text="${file.getFileName}"></li>
-			</ul>
-		</div>
 		<h3 class="text-center">Breakdown of Contrapuntal Motion Events</h3>
-		<div id="analysis-summary" class="row">
+		<div id="analysis-summary" class="row mb-3">
 			<div class="col">
 				<figure class="float-end">
 					<figcaption class="figure-caption">Total Motion Events</figcaption>
@@ -41,12 +34,19 @@
 				</table>
 			</div>
 		</div>
-		<div id="histogram" class="row justify-content-center">
+		<div id="histogram" class="row mt-3 justify-content-center">
 			<div class="col">
 				<h3 class="text-center">Histogram of Contrapuntal Motion Events</h3>
 				<img src="/analysis/histogram" class="img-fluid d-block mx-auto" 
 				alt="Histogram chart of contrapuntal motion events.">
 			</div>
+		</div>
+		<div th:inline="text" id="files-analyzed">
+			<h3>Files analyzed:</h3>
+			<ul>
+				<li th:each="file : ${session.uploadedFiles}"
+					th:text="${file.getFileName}"></li>
+			</ul>
 		</div>
 		<div class="upload-form">
 			<div th:if="${#lists.isEmpty(session.uploadedFiles)}">

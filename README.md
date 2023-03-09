@@ -14,9 +14,8 @@ By uploading a ZIP file containing multiple MIDI files, users can analyze many p
 In development
 ### To-do List
 - Finish styling the Analysis page (Wednesday-Friday).
-  - Change colors of pie chart and histogram values (Wednesday).
   - Provide more delineation between various sections of the page (Thursday).
-  - Style the list of uploaded files (Friday).
+  - Style the list of uploaded files and add a reset button (Friday).
 - Generate downloadable CSV files of the pie chart and histogram results (Saturday).
   - Refactor PNG-generation code (Saturday).
 - Provide a demo MIDI file for users who want to quickly try the app without having to find or download MIDI files themselves (Monday, March 13).
