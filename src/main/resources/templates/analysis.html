@@ -3,15 +3,15 @@
 <head th:replace="fragments :: head"></head>
 <body>
 	<header th:replace="fragments :: header"></header>
-	<div class="container main pt-3">
+	<div id="main" class="container pt-3">
 		<h2 class="text-center">Analysis</h2>
-		<h3 class="text-center">Breakdown of Contrapuntal Motion Events</h3>
+		<hr>
 		<div id="analysis-summary" class="row mb-3">
 			<div class="col">
 				<figure class="float-end">
-					<figcaption class="figure-caption">Total Motion Events</figcaption>
 					<img src="/analysis/pie-chart" width="300px" height="300px" 
 					alt="Pie chart of contrapuntal motion events.">
+					<figcaption class="figure-caption text-center">All Motion Events</figcaption>
 				</figure>
 			</div>
 			<div class="col my-auto">
@@ -34,13 +34,14 @@
 				</table>
 			</div>
 		</div>
+		<hr>
 		<div id="histogram" class="row mt-3 justify-content-center">
 			<div class="col">
-				<h3 class="text-center">Histogram of Contrapuntal Motion Events</h3>
 				<img src="/analysis/histogram" class="img-fluid d-block mx-auto" 
 				alt="Histogram chart of contrapuntal motion events.">
 			</div>
 		</div>
+		<hr>
 		<div th:inline="text" id="files-analyzed">
 			<h3>Files analyzed:</h3>
 			<ul>
@@ -48,6 +49,7 @@
 					th:text="${file.getFileName}"></li>
 			</ul>
 		</div>
+		<hr>
 		<div class="upload-form">
 			<div th:if="${#lists.isEmpty(session.uploadedFiles)}">
 				<h2>Upload a .midi, .mid, or .zip file for analysis!</h2>

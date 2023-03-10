@@ -9,6 +9,25 @@
 body {
 	background-color: var(--bs-gray-100);
 	color: var(--bs-gray-dark);
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+footer {
+	background-image: linear-gradient(
+	  180deg,
+	  hsl(210deg 17% 98%) 14%,
+	  hsl(211deg 81% 93%) 65%,
+	  hsl(212deg 94% 88%) 79%,
+	  hsl(213deg 100% 84%) 88%,
+	  hsl(214deg 100% 80%) 93%,
+	  hsl(214deg 100% 75%) 96%,
+	  hsl(215deg 100% 71%) 99%,
+	  hsl(216deg 100% 66%) 100%,
+	  hsl(216deg 100% 62%) 100%,
+	  hsl(216deg 100% 57%) 100%
+	);
 }
 
 header {
@@ -16,12 +35,21 @@ header {
 	color: var(--bs-gray-100);
 }
 
-footer {
-	text-align: center;
+hr {
+    border: none;
+    border-top: 3px double var(--app-blue); 
+    color: var(--app-blue);
+    overflow: visible;
+    text-align: center;
+    height: 5px;
 }
 
-figcaption {
-	text-align: center;
+hr:after {
+    background: var(--bs-gray-100);
+    content: '\01D11E';
+    padding: 0 4px;
+    position: relative;
+    top: -13px;
 }
 
 td {
@@ -29,18 +57,18 @@ td {
 	padding-right: 0.2rem;
 }
 
-.red {
-	color: var(--app-red);
-}
-
-.green {
-	color: var(--app-green);
+#main {
+	flex-grow: 1;
 }
 
 .blue {
 	color: var(--app-blue);
 }
 
-.main {
-	text-align: justify;
+.green {
+	color: var(--app-green);
+}
+
+.red {
+	color: var(--app-red);
 }

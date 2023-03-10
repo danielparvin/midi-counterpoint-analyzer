@@ -1,21 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" lang="en">
 <head th:replace="fragments :: head">
-<title>MIDI Analyzer</title>
+	<title>MIDI Analyzer</title>
 </head>
 <body>
 	<header th:replace="fragments :: header"></header>
-	<div class="container main pt-3">
+	<div id="main" class="container pt-3">
 		<div class="upload-form">
-			<div th:if="${#lists.isEmpty(session.uploadedFiles)}">
-				<h2>Upload a .midi, .mid, or .zip file for analysis!</h2>
-			</div>
-			<div th:unless="${#lists.isEmpty(session.uploadedFiles)}">
-				<h2>
-					Upload another MIDI file, <em>or</em> <a
-						href="/analysis">analyze</a> the uploaded files!
-				</h2>
-			</div>
+			<h2>Upload a .midi, .mid, or .zip file for analysis!</h2>
 			<form method="POST" enctype="multipart/form-data" action="/upload"
 				id="upload-form">
 				<div class="input-group">
@@ -24,16 +16,6 @@
 						oninput="document.getElementById('upload-form').submit()">
 				</div>
 			</form>
-		</div>
-		<div th:if="${message}" id="message" class="alert alert-success mt-1"
-			role="alert" th:text="${message}"></div>
-		<div th:if="${not #lists.isEmpty(session.uploadedFiles)}"
-			class="uploaded-files pt-2">
-			<h3>Files uploaded:</h3>
-			<ul>
-				<li th:each="file : ${session.uploadedFiles}"
-					th:text="${file.getFileName}"></li>
-			</ul>
 		</div>
 		<div class="info pt-2">
 			<figure class="float-end mx-1"><img src="/images/midi-visualization.png" width="200" height="139"

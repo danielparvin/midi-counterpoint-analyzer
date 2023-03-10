@@ -13,14 +13,17 @@ By uploading a ZIP file containing multiple MIDI files, users can analyze many p
 ## Project Status
 In development
 ### To-do List
-- Finish styling the Analysis page (Wednesday-Friday).
-  - Provide more delineation between various sections of the page (Thursday).
-  - Style the list of uploaded files and add a reset button (Friday).
+- Finish styling the Analysis page (Wednesday-Saturday).
+  - Adjust legend to drop below pie chart on small screens (Friday).
+  - Adjust "Upload another MIDI file!" section to appear next to "Files analyzed" section on large screens (Friday).
+  - Add legend to (or next to) histogram image (Friday).
+  - Style the list of uploaded files and add a reset button (Saturday). (Replace bullets with musical note icons. Provide distinct background and text color to the section.)
 - Generate downloadable CSV files of the pie chart and histogram results (Saturday).
   - Refactor PNG-generation code (Saturday).
-- Provide a demo MIDI file for users who want to quickly try the app without having to find or download MIDI files themselves (Monday, March 13).
+- Provide a demo MIDI file for users who want to quickly try the app without having to find or download MIDI files themselves (Monday) (https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1780).
+- Make most of the Analysis page conditional upon the presence of an analysis (Monday).
 - Analyze Bach's Two-part Inventions.
-  - Evaluate contrapuntal motion trends in fast vs. slow inventions (Tuesday, March 14).
-- Ask colleagues for feedback (Wednesday, March 15).
+  - Evaluate contrapuntal motion trends in fast vs. slow inventions (Tuesday).
+- Ask colleagues for feedback (Wednesday).
 - Incorporate feedback (Monday, March 20).
 - Record a demo video, describing and demonstrating the app, the Bach Inventions case study, and the limitations of the algorithm (Tuesday, March 21).
