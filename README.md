@@ -14,12 +14,10 @@ By uploading a ZIP file containing multiple MIDI files, users can analyze many p
 In development
 ### To-do List
 - Finish styling the Analysis page (Wednesday-Saturday).
-  - Adjust legend to drop below pie chart on small screens (Friday).
-  - Adjust "Upload another MIDI file!" section to appear next to "Files analyzed" section on large screens (Friday).
-  - Add legend to (or next to) histogram image (Friday).
-  - Style the list of uploaded files and add a reset button (Saturday). (Replace bullets with musical note icons. Provide distinct background and text color to the section.)
+  - Add a reset button to list of uploads (Saturday).
 - Generate downloadable CSV files of the pie chart and histogram results (Saturday).
   - Refactor PNG-generation code (Saturday).
+- Make the Uploads form a fragment (Monday).
 - Provide a demo MIDI file for users who want to quickly try the app without having to find or download MIDI files themselves (Monday) (https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1780).
 - Make most of the Analysis page conditional upon the presence of an analysis (Monday).
 - Analyze Bach's Two-part Inventions.

@@ -3,61 +3,81 @@
 <head th:replace="fragments :: head"></head>
 <body>
 	<header th:replace="fragments :: header"></header>
-	<div id="main" class="container pt-3">
+	<div class="main container pt-3"
+		th:unless="${#lists.isEmpty(session.uploadedFiles)}">
 		<h2 class="text-center">Analysis</h2>
 		<hr>
-		<div id="analysis-summary" class="row mb-3">
-			<div class="col">
-				<figure class="float-end">
-					<img src="/analysis/pie-chart" width="300px" height="300px" 
-					alt="Pie chart of contrapuntal motion events.">
-					<figcaption class="figure-caption text-center">All Motion Events</figcaption>
+		<div id="pie-chart-section" class="row mb-3">
+			<div class="col-md-6">
+				<figure class="text-center float-md-end">
+					<img src="/analysis/pie-chart" width="300px" height="300px"
+						alt="Pie chart of contrapuntal motion events.">
+					<figcaption class="figure-caption text-center">All
+						Motion Events</figcaption>
 				</figure>
 			</div>
-			<div class="col my-auto">
-				<table th:inline="text">
-					<tr>
-						<td><span class="red">&#9632;</span></td>
-						<td>Total Contrary Motion Events:</td>
-						<td>[[${session.totalContraryEvents}]]</td>
-					</tr>
-					<tr>
-						<td><span class="blue">&#9632;</span></td>
-						<td>Total Similar Motion Events:</td>
-						<td>[[${session.totalSimilarEvents}]]</td>
-					</tr>
-					<tr>
-						<td><span class="green">&#9632;</span></td>
-						<td>Total Oblique Motion Events:</td>
-						<td>[[${session.totalObliqueEvents}]]</td>
-					</tr>
-				</table>
+			<div id="pie-chart-text-summary"
+				class="col-md-6 my-auto text-center text-md-start" th:inline="text">
+				<ul class="legend">
+					<li class="red-point">Total Contrary Motion Events: <strong>[[${session.totalContraryEvents}]]</strong></li>
+					<li class="blue-point">Total Similar Motion Events: <strong>[[${session.totalSimilarEvents}]]</strong></li>
+					<li class="green-point">Total Oblique Motion Events: <strong>[[${session.totalObliqueEvents}]]</strong></li>
+				</ul>
 			</div>
 		</div>
 		<hr>
 		<div id="histogram" class="row mt-3 justify-content-center">
 			<div class="col">
-				<img src="/analysis/histogram" class="img-fluid d-block mx-auto" 
-				alt="Histogram chart of contrapuntal motion events.">
+				<img src="/analysis/histogram" class="img-fluid d-block mx-auto"
+					alt="Histogram chart of contrapuntal motion events.">
 			</div>
 		</div>
-		<hr>
-		<div th:inline="text" id="files-analyzed">
-			<h3>Files analyzed:</h3>
-			<ul>
-				<li th:each="file : ${session.uploadedFiles}"
-					th:text="${file.getFileName}"></li>
+		<div id="histogram-legend" class="d-flex mt-1 justify-content-center">
+			<ul class="legend">
+				<li class="red-point">Contrary Motion Events</li>
+				<li class="blue-point">Similar Motion Events</li>
+				<li class="green-point">Oblique Motion Events</li>
 			</ul>
 		</div>
 		<hr>
-		<div class="upload-form">
+		<div id="analysis-uploads" class="row">
+			<div id="files-analyzed" class="col-md-3" th:inline="text">
+				<h3 class="text-center text-md-start">Files analyzed:</h3>
+				<p th:if="${#lists.isEmpty(session.uploadedFiles)}">None yet!</p>
+				<ul>
+					<li th:each="file: ${session.uploadedFiles}"
+						th:text="${file.getFileName}"></li>
+				</ul>
+			</div>
+			<hr class="d-md-none">
+			<div id="upload-form"
+				class="col-md-9 mb-auto text-center text-md-start">
+				<div th:if="${#lists.isEmpty(session.uploadedFiles)}">
+					<h3>Upload a .midi, .mid, or .zip file for analysis!</h3>
+				</div>
+				<div th:unless="${#lists.isEmpty(session.uploadedFiles)}">
+					<h3>Upload another MIDI file!</h3>
+				</div>
+				<form method="POST" enctype="multipart/form-data" action="/upload"
+					id="upload-form">
+					<div class="input-group">
+						<input type="file" name="file" accept=".mid, .midi, .zip"
+							class="form-control" id="inputGroupFile01"
+							oninput="document.getElementById('upload-form').submit()">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="main container pt-3"
+		th:if="${#lists.isEmpty(session.uploadedFiles)}">
+		<div id="upload-form"
+			class="col text-center text-md-start">
 			<div th:if="${#lists.isEmpty(session.uploadedFiles)}">
-				<h2>Upload a .midi, .mid, or .zip file for analysis!</h2>
+				<h3>Upload a .midi, .mid, or .zip file for analysis!</h3>
 			</div>
 			<div th:unless="${#lists.isEmpty(session.uploadedFiles)}">
-				<h2>
-					Upload another MIDI file!
-				</h2>
+				<h3>Upload another MIDI file!</h3>
 			</div>
 			<form method="POST" enctype="multipart/form-data" action="/upload"
 				id="upload-form">

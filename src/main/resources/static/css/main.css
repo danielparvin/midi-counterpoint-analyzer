@@ -15,19 +15,7 @@ body {
 }
 
 footer {
-	background-image: linear-gradient(
-	  180deg,
-	  hsl(210deg 17% 98%) 14%,
-	  hsl(211deg 81% 93%) 65%,
-	  hsl(212deg 94% 88%) 79%,
-	  hsl(213deg 100% 84%) 88%,
-	  hsl(214deg 100% 80%) 93%,
-	  hsl(214deg 100% 75%) 96%,
-	  hsl(215deg 100% 71%) 99%,
-	  hsl(216deg 100% 66%) 100%,
-	  hsl(216deg 100% 62%) 100%,
-	  hsl(216deg 100% 57%) 100%
-	);
+	border-bottom: var(--app-blue) solid 3px;
 }
 
 header {
@@ -52,23 +40,48 @@ hr:after {
     top: -13px;
 }
 
-td {
-	padding-left: 0.2rem;
-	padding-right: 0.2rem;
+#files-analyzed {
+	background-color: var(--bs-gray-200);
+	margin-bottom: 1rem;
 }
 
-#main {
+#files-analyzed ul {
+	list-style-type: '\1D160';
+}
+
+#files-analyzed li {
+	padding-left: 3px;
+}
+
+.blue-point:before {
+	color: var(--app-blue);
+	padding: 0 4px;
+	content: '\25A0';
+}
+
+.green-point:before {
+	color: var(--app-green);
+	padding: 0 4px;
+	content: '\25A0';
+}
+
+.legend p {
+	margin-bottom: 0.25rem;
+}
+
+.legend {
+	list-style-type: none;
+	margin-block-start: 0em;
+	margin-block-end: 0em;
+	padding-inline-start: 0px;
+}
+
+.main {
 	flex-grow: 1;
 }
 
-.blue {
-	color: var(--app-blue);
-}
-
-.green {
-	color: var(--app-green);
-}
-
-.red {
+.red-point:before {
 	color: var(--app-red);
+	padding: 0 4px;
+	content: '\25A0';
 }
