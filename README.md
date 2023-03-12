@@ -12,14 +12,10 @@ By uploading a ZIP file containing multiple MIDI files, users can analyze many p
 
 ## Project Status
 In development
+
 ### To-do List
-- Finish styling the Analysis page (Wednesday-Saturday).
-  - Add a reset button to list of uploads (Saturday).
-- Generate downloadable CSV files of the pie chart and histogram results (Saturday).
-  - Refactor PNG-generation code (Saturday).
-- Make the Uploads form a fragment (Monday).
 - Provide a demo MIDI file for users who want to quickly try the app without having to find or download MIDI files themselves (Monday) (https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1780).
-- Make most of the Analysis page conditional upon the presence of an analysis (Monday).
+- Handle flash attribute "message" on analysis page to inform user when an upload fails (Monday).
 - Analyze Bach's Two-part Inventions.
   - Evaluate contrapuntal motion trends in fast vs. slow inventions (Tuesday).
 - Ask colleagues for feedback (Wednesday).

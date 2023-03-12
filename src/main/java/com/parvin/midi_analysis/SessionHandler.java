@@ -1,6 +1,5 @@
 package com.parvin.midi_analysis;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,11 +29,12 @@ public class SessionHandler {
 	public static final String COUNTERPOINT_HISTOGRAM_PNG_PATH = "counterpointHistogramPng";
 	public static final String COUNTERPOINT_PIE_CHART_PNG_PATH = "counterpointPieChartPng";
 	public static final String HISTOGRAM_BIN_SIZE_INT = "histogramBinSize";
+	public static final String MESSAGE = "message";
 	public static final String TEMP_DIRECTORY_PATH = "tempDirectory";
 	public static final String TOTAL_CONTRARY_EVENTS_LONG = "totalContraryEvents";
 	public static final String TOTAL_OBLIQUE_EVENTS_LONG = "totalObliqueEvents";
 	public static final String TOTAL_SIMILAR_EVENTS_LONG = "totalSimilarEvents";
-	public static final String UPLOADED_MIDI_FILES_SET = "uploadedFiles"; // TODO Refactor to use a List instead, for more advanced file-selection analysis options.
+	public static final String UPLOADED_MIDI_FILES_SET = "uploadedFiles";
 	
 	@Bean
 	public HttpSessionEventPublisher httpSessionEventPublisher() {
@@ -47,9 +47,9 @@ public class SessionHandler {
 			HttpSession session = event.getSession();
 			session.setAttribute(COUNTERPOINT_ANALYSES_LIST, new ArrayList<Analysis>());
 			session.setAttribute(HISTOGRAM_BIN_SIZE_INT, DEFAULT_HISTOGRAM_BIN_SIZE);
-			session.setAttribute(UPLOADED_MIDI_FILES_SET, new TreeSet<File>());
+			session.setAttribute(UPLOADED_MIDI_FILES_SET, new TreeSet<Path>());
 			try {
-				Path tempDirectory = Files.createTempDirectory("temp");
+				Path tempDirectory = Files.createTempDirectory("session-");
 				session.setAttribute(TEMP_DIRECTORY_PATH, tempDirectory);
 				Path counterpointHistogramCsv = Files.createTempFile(tempDirectory, "counterpoint-histogram", ".csv");
 				session.setAttribute(COUNTERPOINT_HISTOGRAM_CSV_PATH, counterpointHistogramCsv);
@@ -67,27 +67,44 @@ public class SessionHandler {
 	public ApplicationListener<HttpSessionDestroyedEvent> logoutListener() {
 		return event -> {
 			HttpSession session = event.getSession();
-			@SuppressWarnings("unchecked")
-			Set<File> uploadedFiles = (Set<File>) session.getAttribute(UPLOADED_MIDI_FILES_SET);
-			for (File file: uploadedFiles) {
-				try {
-					Files.deleteIfExists(file.toPath());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			Path counterpointHistogramCsv = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_CSV_PATH);			
-			Path counterpointHistogramPng = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_PNG_PATH);
-			Path counterpointPieChartPng = (Path) session.getAttribute(COUNTERPOINT_PIE_CHART_PNG_PATH);
-			Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY_PATH);
+			deleteUploadedFiles(session);
+			deleteAnalysisFiles(session);
+			deleteTempDirectory(session);
+		};
+	}
+	
+	void deleteUploadedFiles(HttpSession session) {
+		@SuppressWarnings("unchecked")
+		Set<Path> uploadedFiles = (Set<Path>) session.getAttribute(UPLOADED_MIDI_FILES_SET);
+		for (Path path: uploadedFiles) {
 			try {
-				Files.deleteIfExists(counterpointHistogramCsv);
-				Files.deleteIfExists(counterpointHistogramPng);
-				Files.deleteIfExists(counterpointPieChartPng);
-				Files.deleteIfExists(tempDirectory);
+				Files.deleteIfExists(path);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		};
+		}
+		uploadedFiles.clear();
+	}
+	
+	void deleteAnalysisFiles(HttpSession session) {
+		Path counterpointHistogramCsv = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_CSV_PATH);			
+		Path counterpointHistogramPng = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_PNG_PATH);
+		Path counterpointPieChartPng = (Path) session.getAttribute(COUNTERPOINT_PIE_CHART_PNG_PATH);
+		try {
+			Files.deleteIfExists(counterpointHistogramCsv);
+			Files.deleteIfExists(counterpointHistogramPng);
+			Files.deleteIfExists(counterpointPieChartPng);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void deleteTempDirectory(HttpSession session) {
+		Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY_PATH);
+		try {
+			Files.deleteIfExists(tempDirectory);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

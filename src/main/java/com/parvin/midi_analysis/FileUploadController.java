@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,41 +24,46 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class FileUploadController {
-	public static final String MESSAGE = "message";
+	@Autowired
+	private SessionHandler sessionHandler;
 	
 	@PostMapping("/upload")
 	public String handleUpload(HttpSession session, 
 			@RequestParam("file") MultipartFile file, 
 			RedirectAttributes redirectAttributes) {
-		@SuppressWarnings("unchecked")
-		Set<Path> uploadedFiles = (Set<Path>) session.getAttribute(UPLOADED_MIDI_FILES_SET);
-		Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY_PATH);
+		sessionHandler.deleteUploadedFiles(session);
+		sessionHandler.deleteAnalysisFiles(session);
 		String originalFilename = file.getOriginalFilename();
 		if (filenameHasExtension(originalFilename, "mid", "midi")) {
-			handleMidiFile(file, redirectAttributes, uploadedFiles, tempDirectory);
+			handleMidiFile(session, file, redirectAttributes);
 		} else if (filenameHasExtension(originalFilename, "zip")) {
-			handleZipFile(file, redirectAttributes, uploadedFiles, tempDirectory);
+			handleZipFile(session, file, redirectAttributes);
 		} else {
-			redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded file must be a .MID, .MIDI, or .ZIP file!");
+			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, 
+					"Uploaded file must be a .MID, .MIDI, or .ZIP file!");
 		}
 		return "redirect:/analyze";
 	}
 
-	private void handleMidiFile(MultipartFile file, RedirectAttributes redirectAttributes, Set<Path> uploadedFiles,
-			Path tempDirectory) {
+	private void handleMidiFile(HttpSession session, MultipartFile file, RedirectAttributes redirectAttributes) {
+		@SuppressWarnings("unchecked")
+		Set<Path> uploadedFiles = (Set<Path>) session.getAttribute(UPLOADED_MIDI_FILES_SET); // TODO Refactor this into SessionHandler.
+		Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY_PATH);
 		try {
 			Path uploadedFile = tempDirectory.resolve(file.getOriginalFilename());
 			file.transferTo(uploadedFile);
 			uploadedFiles.add(uploadedFile);
-			redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded file successfully!");
+			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Uploaded file successfully!");
 		} catch (IOException e) {
 			e.printStackTrace();
-			redirectAttributes.addFlashAttribute(MESSAGE, "Upload failed.");
+			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Upload failed.");
 		}
 	}
 
-	private void handleZipFile(MultipartFile file, RedirectAttributes redirectAttributes, Set<Path> uploadedFiles,
-			Path tempDirectory) {
+	private void handleZipFile(HttpSession session, MultipartFile file, RedirectAttributes redirectAttributes) {
+		@SuppressWarnings("unchecked")
+		Set<Path> uploadedFiles = (Set<Path>) session.getAttribute(UPLOADED_MIDI_FILES_SET);
+		Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY_PATH);
 		try {
 			File zipFile = tempDirectory.resolve(file.getOriginalFilename()).toFile();
 			file.transferTo(zipFile);
@@ -66,7 +72,7 @@ public class FileUploadController {
 						&& (filenameHasExtension(path.getFileName().toString(), "mid", "midi")))
 				.toList();
 				if (midiPaths.isEmpty()) {
-					redirectAttributes.addFlashAttribute(MESSAGE, "No MIDI file found in ZIP file!");
+					redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "No MIDI file found in ZIP file!");
 					return;
 				}
 				for (Path midiPath : midiPaths) {
@@ -75,15 +81,15 @@ public class FileUploadController {
 						Files.copy(midiPath, uploadedFile, StandardCopyOption.REPLACE_EXISTING);
 						uploadedFiles.add(uploadedFile);
 					} catch (IOException e) {
-						e.printStackTrace(); // TODO Handle IOException properly.
+						e.printStackTrace();
 					}
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			redirectAttributes.addFlashAttribute(MESSAGE, "Upload failed.");
+			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Upload failed.");
 		}
-		redirectAttributes.addFlashAttribute(MESSAGE, "Uploaded files successfully!");
+		redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Uploaded files successfully!");
 	}
 	
 	/**

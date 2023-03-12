@@ -50,13 +50,15 @@ import com.parvin.midi_analysis.counterpoint.events.ContrapuntalMotion;
 
 @Controller
 public class AnalysisController {
-	public static final Color RED = Color.decode("#ff6347"); // TODO Move this somewhere more appropriate.
-	public static final Color ORANGE = Color.decode("#ff6900");
+	public static final int HEIGHT_PX = 800;
+	public static final int WIDTH_PX = 800;
+	public static final Color RED = Color.decode("#ff6347");
 	public static final Color BLUE = Color.decode("#227bff");
 	public static final Color GREEN = Color.decode("#00d084");
 	private static final String OBLIQUE_MOTION_EVENTS = "Oblique Motion Events";
 	private static final String SIMILAR_MOTION_EVENTS = "Similar Motion Events";
 	private static final String CONTRARY_MOTION_EVENTS = "Contrary Motion Events";
+	
 
 	@GetMapping("/analysis/csv")
 	@ResponseBody
@@ -161,9 +163,9 @@ public class AnalysisController {
 		try {
 			saveHistogramCsvInSession(session, histogram);
 		} catch (IOException e) {
-			// TODO Handle IOException.
+			e.printStackTrace();
 		}
-		BufferedImage bufferedImage = histogram.createBufferedImage(800, 800, null); // TODO Make params variable.
+		BufferedImage bufferedImage = histogram.createBufferedImage(WIDTH_PX, HEIGHT_PX, null);
 		File histogramPng = ((Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_PNG_PATH)).toFile();
 		try {
 			ImageIO.write(bufferedImage, "PNG", histogramPng);
@@ -172,37 +174,48 @@ public class AnalysisController {
 		}
 		return "redirect:/analysis";
 	}
-
-	private void saveHistogramCsvInSession(HttpSession session, JFreeChart histogram) throws IOException { // TODO Refactor the session saving from the file generation
+	
+	/**
+	 * 
+	 * @param session
+	 * @param histogram A histogram with a dataset containing series of an equal number of items.
+	 * @throws IOException
+	 */
+	private void saveHistogramCsvInSession(HttpSession session, JFreeChart histogram) throws IOException {
 		XYIntervalSeriesCollection dataset = (XYIntervalSeriesCollection) histogram.getXYPlot().getDataset();
-		Map<String, Double> eventsForBin = new LinkedHashMap<>(); // Preserve insertion order.
-		for (int seriesNumber = 0; seriesNumber < dataset.getSeriesCount(); seriesNumber++) {
-			XYIntervalSeries series = dataset.getSeries(seriesNumber);
-			String seriesName = (String) series.getKey();
-			for (int itemNumber = 0; itemNumber < series.getItemCount(); itemNumber++) {
-				double xLow = series.getXLowValue(itemNumber);
-				double xHigh = series.getXHighValue(itemNumber);
-				String columnName = xLow + "-" + xHigh + "% (" + seriesName + ")";
-				double y = series.getYValue(itemNumber);
-				eventsForBin.merge(columnName, y, Double::sum);
-			}
-		}
 		Path counterpointHistogramCsvPath = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_CSV_PATH);
 		try (FileWriter writer = new FileWriter(counterpointHistogramCsvPath.toFile())) {
-			for (String bin : eventsForBin.keySet()) { // Write header row.
-				writer.write(bin);
+			// Write header row. TODO Refactor into private method.
+			writer.write("Bin");
+			writer.write(',');
+			for (int seriesNumber = 0; seriesNumber < dataset.getSeriesCount(); seriesNumber++) {
+				writer.write((String) dataset.getSeries(seriesNumber).getKey()); // e.g. "Contrary Motion Events"
 				writer.write(',');
 			}
 			writer.write('\n');
-			for (Double value : eventsForBin.values()) {
-				writer.write(value.toString());
+			
+			if (dataset.getSeriesCount() < 1) { // TODO Handle with a flash attribute message.
+				throw new IllegalStateException("The histogram's dataset does not include any series!");
+			}
+			XYIntervalSeries modelSeries = dataset.getSeries(0);
+			int numberOfBins = modelSeries.getItemCount();
+			for (int binNumber = 0; binNumber < numberOfBins; binNumber++) {
+				double xLow = modelSeries.getXLowValue(binNumber);
+				double xHigh = modelSeries.getXHighValue(binNumber);
+				writer.write(xLow + "-" + xHigh + "%");
 				writer.write(',');
+				for (int seriesNumber = 0; seriesNumber < dataset.getSeriesCount(); seriesNumber++) {
+					XYIntervalSeries series = dataset.getSeries(seriesNumber);
+					writer.write(String.valueOf((int) series.getYValue(binNumber)));
+					writer.write(',');
+				}
+				writer.write('\n');
 			}
 		}
 	}
 	
 	private void writeAndSavePieChartToSession(HttpSession session, JFreeChart pieChart) {
-		BufferedImage bufferedImage = pieChart.createBufferedImage(800, 800, null); // TODO Make these variable.
+		BufferedImage bufferedImage = pieChart.createBufferedImage(WIDTH_PX, HEIGHT_PX, null);
 		File pieChartPng = ((Path) session.getAttribute(COUNTERPOINT_PIE_CHART_PNG_PATH)).toFile();
 		try {
 			ImageIO.write(bufferedImage, "PNG", pieChartPng);
@@ -215,7 +228,11 @@ public class AnalysisController {
 		long numContraryMotionEvents = (long) session.getAttribute(TOTAL_CONTRARY_EVENTS_LONG);
 		long numSimilarMotionEvents = (long) session.getAttribute(TOTAL_SIMILAR_EVENTS_LONG);
 		long numObliqueMotionEvents = (long) session.getAttribute(TOTAL_OBLIQUE_EVENTS_LONG);
-		return getPieChartOf(null, numContraryMotionEvents, numSimilarMotionEvents, numObliqueMotionEvents);
+		List<PieChartSegment> components = new ArrayList<>();
+		components.add(new PieChartSegment(CONTRARY_MOTION_EVENTS, numContraryMotionEvents, RED));
+		components.add(new PieChartSegment(SIMILAR_MOTION_EVENTS, numSimilarMotionEvents, BLUE));
+		components.add(new PieChartSegment(OBLIQUE_MOTION_EVENTS, numObliqueMotionEvents, GREEN));
+		return createPieChart(null, components, false);
 	}
 
 	private void recordAnalysisStatsInSession(HttpSession session, List<Analysis> analyses) {
@@ -233,21 +250,18 @@ public class AnalysisController {
 		session.setAttribute(TOTAL_OBLIQUE_EVENTS_LONG, numberOfObliqueMotionEvents);
 	}
 
-	private JFreeChart getPieChartOf(String title, // TODO Refactor to make this more modular if possible.
-			long numContraryMotionEvents,
-			long numSimilarMotionEvents,
-			long numObliqueMotionEvents) {
+	private JFreeChart createPieChart(String title, List<PieChartSegment> segments, boolean createLegend) {
 		DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
-		dataset.setValue(CONTRARY_MOTION_EVENTS, numContraryMotionEvents);
-		dataset.setValue(SIMILAR_MOTION_EVENTS, numSimilarMotionEvents);
-		dataset.setValue(OBLIQUE_MOTION_EVENTS, numObliqueMotionEvents);
+		for (PieChartSegment segment: segments) {
+			dataset.setValue(segment.key(), segment.value());
+		}
 		PiePlot<String> plot = new PiePlot<>(dataset);
 		plot.setLabelGenerator(null);
 		plot.setBackgroundPaint(Color.LIGHT_GRAY);
-		plot.setSectionPaint(CONTRARY_MOTION_EVENTS, RED);
-		plot.setSectionPaint(SIMILAR_MOTION_EVENTS, BLUE);
-		plot.setSectionPaint(OBLIQUE_MOTION_EVENTS, GREEN);
-		JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+		for (PieChartSegment segment: segments) {
+			plot.setSectionPaint(segment.key(), segment.color());
+		}
+		JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, createLegend);
 		chart.setBackgroundPaint(Color.WHITE);
 		return chart;
 	}

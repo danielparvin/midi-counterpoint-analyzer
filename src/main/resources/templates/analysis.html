@@ -39,25 +39,21 @@
 				<li class="green-point">Oblique Motion Events</li>
 			</ul>
 		</div>
+		<div class="row text-center mt-1">
+			<h4><a href="/analysis/csv">Download CSV Report</a></h4>
+		</div>
 		<hr>
 		<div id="analysis-uploads" class="row">
 			<div id="files-analyzed" class="col-md-3" th:inline="text">
 				<h3 class="text-center text-md-start">Files analyzed:</h3>
-				<p th:if="${#lists.isEmpty(session.uploadedFiles)}">None yet!</p>
 				<ul>
 					<li th:each="file: ${session.uploadedFiles}"
 						th:text="${file.getFileName}"></li>
 				</ul>
 			</div>
 			<hr class="d-md-none">
-			<div id="upload-form"
-				class="col-md-9 mb-auto text-center text-md-start">
-				<div th:if="${#lists.isEmpty(session.uploadedFiles)}">
-					<h3>Upload a .midi, .mid, or .zip file for analysis!</h3>
-				</div>
-				<div th:unless="${#lists.isEmpty(session.uploadedFiles)}">
-					<h3>Upload another MIDI file!</h3>
-				</div>
+			<div class="col-md-9 mb-auto text-center text-md-start">
+				<h3>Upload another MIDI file!</h3>
 				<form method="POST" enctype="multipart/form-data" action="/upload"
 					id="upload-form">
 					<div class="input-group">
@@ -69,16 +65,11 @@
 			</div>
 		</div>
 	</div>
+	<!-- Display the upload form on the analysis page by default. -->
 	<div class="main container pt-3"
 		th:if="${#lists.isEmpty(session.uploadedFiles)}">
-		<div id="upload-form"
-			class="col text-center text-md-start">
-			<div th:if="${#lists.isEmpty(session.uploadedFiles)}">
-				<h3>Upload a .midi, .mid, or .zip file for analysis!</h3>
-			</div>
-			<div th:unless="${#lists.isEmpty(session.uploadedFiles)}">
-				<h3>Upload another MIDI file!</h3>
-			</div>
+		<div class="col text-center text-md-start">
+			<h3>Upload a .midi, .mid, or .zip file for analysis!</h3>
 			<form method="POST" enctype="multipart/form-data" action="/upload"
 				id="upload-form">
 				<div class="input-group">
