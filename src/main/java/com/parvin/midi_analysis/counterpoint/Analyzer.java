@@ -31,41 +31,41 @@ import com.parvin.midi_analysis.counterpoint.events.NotePlayedEvent;
 public final class Analyzer {
 	private final String filename;
 	private final Track[] tracks;
-	
+
 	public Analyzer(String originalFilename, InputStream midiStream) throws InvalidMidiDataException, IOException {
 		filename = originalFilename;
 		Sequence midiSequence = MidiSystem.getSequence(midiStream);
 		tracks = midiSequence.getTracks();
 	}
-	
+
 	public Analyzer(File midiFile) throws InvalidMidiDataException, IOException {
 		filename = midiFile.getName();
 		Sequence midiSequence = MidiSystem.getSequence(midiFile);
 		tracks = midiSequence.getTracks();
 	}
-	
+
 	public List<Analysis> analyzeAllTracks() {
 		List<Analysis> analyses = new ArrayList<>();
 		if (tracks.length < 2) { // We need at least two tracks to compare to each other.
 			return analyses;
 		}
-		
+
 		// Compare each track to each other (e.g. 0:1, 0:2, 0:3, 1:2, 1:3, 2:3 for four tracks).
 		for (int trackNum = 0; trackNum < tracks.length; trackNum++) {
 			for (int comparisonTrackNum = trackNum + 1; comparisonTrackNum < tracks.length; comparisonTrackNum++) {
 				analyses.addAll(analyzeTracks(trackNum, comparisonTrackNum));
 			}
 		}
-		
+
 		return analyses;
 	}
-	
+
 	/**
 	 * Perform a counterpoint analysis of two tracks. (The order of the primary and comparison tracks does not matter.)
 	 * @param trackNumber Index of the primary track.
 	 * @param comparisonTrackNumber Index of the comparison track.
 	 * @return Analysis of the contrapuntal motion between the two tracks.
-	 * @throws InvalidMidiDataException 
+	 * @throws InvalidMidiDataException
 	 */
 	public List<Analysis> analyzeTracks(int trackNumber, int comparisonTrackNumber) {
 		List<Analysis> analyses = new ArrayList<>();
@@ -74,11 +74,11 @@ public final class Analyzer {
 		analyses.add(new Analysis(filename, ticks, trackNumber, comparisonTrackNumber, motionEvents));
 		return analyses;
 	}
-	
+
 	public String getFilename() {
 		return filename;
 	}
-	
+
 	public int getNumberOfTracks() {
 		return tracks.length;
 	}
@@ -97,7 +97,7 @@ public final class Analyzer {
 			return OBLIQUE;
 		} else if (interval == comparisonInterval) {
 			return PARALLEL;
-		} else if (Math.max(interval, comparisonInterval) > 0 
+		} else if (Math.max(interval, comparisonInterval) > 0
 				&& Math.min(interval, comparisonInterval) < 0) {
 			return CONTRARY;
 		} else if (Math.max(interval, comparisonInterval) - Math.min(interval, comparisonInterval) == 1) {
@@ -110,7 +110,7 @@ public final class Analyzer {
 	/**
 	 * Calculate the intervals from the first note to the second note, on to the last note.<br>
 	 * When multiple notes occur at the same time, use the highest note of the chord to calculate the interval.
-	 * @param notePlayedEvents 
+	 * @param notePlayedEvents
 	 * @return List of IntervalEvents
 	 */
 	private List<IntervalEvent> getIntervalEvents(List<NotePlayedEvent> notePlayedEvents) {
@@ -178,7 +178,7 @@ public final class Analyzer {
 				}
 			}
 		}
-	
+
 		return noteOnEvents;
 	}
 }

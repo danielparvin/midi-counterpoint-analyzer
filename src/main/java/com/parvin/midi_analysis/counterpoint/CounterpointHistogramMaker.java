@@ -40,7 +40,7 @@ public class CounterpointHistogramMaker {
 			for (NormalizedMotionEvent normalizedEvent: normalizedMotionEvents) {
 				ContrapuntalMotion motionType = normalizedEvent.getMotion();
 				switch(motionType) {
-					case CONTRARY: 
+					case CONTRARY:
 						contraryHistogram.addObservation(normalizedEvent.getNormalizedTiming());
 						break;
 					case PARALLEL, SIMILAR:
@@ -70,13 +70,13 @@ public class CounterpointHistogramMaker {
 		XYPlot plot = new XYPlot(xyCollection, xAxis, yAxis, barRenderer);
 		plot.getRenderer(xyCollection.indexOf("Contrary Motion Events"));
 		plot.getRenderer().setSeriesPaint(binSize, null);
-		
+
 		plot.setOrientation(PlotOrientation.VERTICAL);
 		plot.setBackgroundPaint(Color.LIGHT_GRAY);
 		boolean showLegend = false;
-		JFreeChart histogram = new JFreeChart("Frequency of Contrapuntal Motion Events", 
+		JFreeChart histogram = new JFreeChart("Frequency of Contrapuntal Motion Events",
 				JFreeChart.DEFAULT_TITLE_FONT,
-				plot, 
+				plot,
 				showLegend);
 		// new StandardChartTheme("JFree").apply(histogram); // TODO Finish styling this histogram chart.
 		return histogram;

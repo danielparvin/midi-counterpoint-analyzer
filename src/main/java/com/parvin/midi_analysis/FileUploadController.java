@@ -1,8 +1,5 @@
 package com.parvin.midi_analysis;
 
-import static com.parvin.midi_analysis.SessionHandler.TEMP_DIRECTORY_PATH;
-import static com.parvin.midi_analysis.SessionHandler.UPLOADED_MIDI_FILES_SET;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -26,44 +23,42 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class FileUploadController {
 	@Autowired
 	private SessionHandler sessionHandler;
-	
+
 	@PostMapping("/upload")
-	public String handleUpload(HttpSession session, 
-			@RequestParam("file") MultipartFile file, 
+	public String handleUpload(HttpSession session,
+			@RequestParam("file") MultipartFile file,
 			RedirectAttributes redirectAttributes) {
 		sessionHandler.deleteUploadedFiles(session);
-		sessionHandler.deleteAnalysisFiles(session);
+		sessionHandler.deleteAnalysisCsvAndPngFiles(session);
+		sessionHandler.clearCounterpointAnalyses();
 		String originalFilename = file.getOriginalFilename();
 		if (filenameHasExtension(originalFilename, "mid", "midi")) {
-			handleMidiFile(session, file, redirectAttributes);
+			handleMidiFile(file, redirectAttributes);
 		} else if (filenameHasExtension(originalFilename, "zip")) {
-			handleZipFile(session, file, redirectAttributes);
+			handleZipFile(file, redirectAttributes);
 		} else {
-			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, 
+			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE,
 					"Uploaded file must be a .MID, .MIDI, or .ZIP file!");
 		}
 		return "redirect:/analyze";
 	}
 
-	private void handleMidiFile(HttpSession session, MultipartFile file, RedirectAttributes redirectAttributes) {
-		@SuppressWarnings("unchecked")
-		Set<Path> uploadedFiles = (Set<Path>) session.getAttribute(UPLOADED_MIDI_FILES_SET); // TODO Refactor this into SessionHandler.
-		Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY_PATH);
+	private void handleMidiFile(MultipartFile file, RedirectAttributes redirectAttributes) {
+		Set<Path> uploadedFiles = sessionHandler.getUploadedMidiPaths();
+		Path tempDirectory = sessionHandler.getTempDirectoryPath();
 		try {
 			Path uploadedFile = tempDirectory.resolve(file.getOriginalFilename());
 			file.transferTo(uploadedFile);
 			uploadedFiles.add(uploadedFile);
-			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Uploaded file successfully!");
 		} catch (IOException e) {
 			e.printStackTrace();
 			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Upload failed.");
 		}
 	}
 
-	private void handleZipFile(HttpSession session, MultipartFile file, RedirectAttributes redirectAttributes) {
-		@SuppressWarnings("unchecked")
-		Set<Path> uploadedFiles = (Set<Path>) session.getAttribute(UPLOADED_MIDI_FILES_SET);
-		Path tempDirectory = (Path) session.getAttribute(TEMP_DIRECTORY_PATH);
+	private void handleZipFile(MultipartFile file, RedirectAttributes redirectAttributes) {
+		Set<Path> uploadedFiles = sessionHandler.getUploadedMidiPaths();
+		Path tempDirectory = sessionHandler.getTempDirectoryPath();
 		try {
 			File zipFile = tempDirectory.resolve(file.getOriginalFilename()).toFile();
 			file.transferTo(zipFile);
@@ -91,7 +86,7 @@ public class FileUploadController {
 		}
 		redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Uploaded files successfully!");
 	}
-	
+
 	/**
 	 * Determine whether or not a given filename has a given (case-insensitive) extension.
 	 * @param filename Filename to check (e.g. "fugue1.mid" or "midi-files.zip")

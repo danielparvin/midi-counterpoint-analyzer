@@ -14,7 +14,7 @@ public class Reporter {
 	private static final double ZERO = 0.0;
 	private static final double ONE_HUNDRED = 100.0;
 	private final Analysis analysis;
-	
+
 	public Reporter(Analysis analysis) {
 		this.analysis = analysis;
 	}
@@ -22,7 +22,7 @@ public class Reporter {
 	public long countMotionEventsOfType(ContrapuntalMotion type) {
 		return countMotionEventsOfTypeInRange(type, ZERO, ONE_HUNDRED);
 	}
-	
+
 	public long countMotionEventsOfTypeInRange(ContrapuntalMotion type, double fromPercentage, double toPercentage) {
 		if (fromPercentage < ZERO || fromPercentage >= toPercentage || toPercentage > ONE_HUNDRED) {
 			throw new IllegalArgumentException("Invalid percentage inputs "
@@ -31,7 +31,7 @@ public class Reporter {
 					+ "that fromPercentage is less than toPercentage, "
 					+ "and that toPercentage is no greater than 100.0.\n");
 		}
-		
+
 		List<MotionEvent> motionEvents;
 		if (fromPercentage == ZERO && toPercentage == ONE_HUNDRED) {
 			motionEvents = analysis.getMotionEvents();
@@ -42,7 +42,7 @@ public class Reporter {
 			long lastTick = (long) (toPercentage / ONE_HUNDRED * totalTicks);
 			motionEvents = getPortionOfAnalysis(firstTick, lastTick);
 		}
-		
+
 		return motionEvents.stream().filter(event -> event.getMotion() == type).count();
 	}
 

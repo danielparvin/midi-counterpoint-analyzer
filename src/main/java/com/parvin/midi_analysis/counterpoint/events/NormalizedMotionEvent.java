@@ -1,7 +1,7 @@
 package com.parvin.midi_analysis.counterpoint.events;
 
 /**
- * Represents a {@link MotionEvent} with timing normalized (between 0 and 100) by the total number of ticks 
+ * Represents a {@link MotionEvent} with timing normalized (between 0 and 100) by the total number of ticks
  * in the enclosing track.
  */
 public final class NormalizedMotionEvent extends MotionEvent {

@@ -1,15 +1,5 @@
 package com.parvin.midi_analysis;
 
-import static com.parvin.midi_analysis.SessionHandler.COUNTERPOINT_ANALYSES_LIST;
-import static com.parvin.midi_analysis.SessionHandler.COUNTERPOINT_HISTOGRAM_CSV_PATH;
-import static com.parvin.midi_analysis.SessionHandler.COUNTERPOINT_HISTOGRAM_PNG_PATH;
-import static com.parvin.midi_analysis.SessionHandler.COUNTERPOINT_PIE_CHART_PNG_PATH;
-import static com.parvin.midi_analysis.SessionHandler.HISTOGRAM_BIN_SIZE_INT;
-import static com.parvin.midi_analysis.SessionHandler.TOTAL_CONTRARY_EVENTS_LONG;
-import static com.parvin.midi_analysis.SessionHandler.TOTAL_OBLIQUE_EVENTS_LONG;
-import static com.parvin.midi_analysis.SessionHandler.TOTAL_SIMILAR_EVENTS_LONG;
-import static com.parvin.midi_analysis.SessionHandler.UPLOADED_MIDI_FILES_SET;
-
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -18,11 +8,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
@@ -33,13 +20,13 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.xy.XYIntervalSeries;
 import org.jfree.data.xy.XYIntervalSeriesCollection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.parvin.midi_analysis.counterpoint.Analysis;
@@ -59,23 +46,28 @@ public class AnalysisController {
 	private static final String SIMILAR_MOTION_EVENTS = "Similar Motion Events";
 	private static final String CONTRARY_MOTION_EVENTS = "Contrary Motion Events";
 	
+	@Autowired
+	private SessionHandler sessionHandler;
 
 	@GetMapping("/analysis/csv")
 	@ResponseBody
-	public ResponseEntity<byte[]> getHistogramCsv(HttpSession session) {
-		return getCsvFileByAttributeName(session, COUNTERPOINT_HISTOGRAM_CSV_PATH);
+	public ResponseEntity<byte[]> getHistogramCsv() {
+		Path histogramPath = sessionHandler.getCounterpointHistogramCsvPath();
+		return getCsvFileFromPath(histogramPath);
 	}
 
 	@GetMapping("/analysis/histogram")
 	@ResponseBody
-	public ResponseEntity<byte[]> getHistogramImage(HttpSession session) {
-		return getPngImageByAttributeName(session, COUNTERPOINT_HISTOGRAM_PNG_PATH);
+	public ResponseEntity<byte[]> getHistogramImage() {
+		Path histogramPath = sessionHandler.getCounterpointHistogramPngPath();
+		return getPngFileFromPath(histogramPath);
 	}
 
 	@GetMapping("/analysis/pie-chart")
 	@ResponseBody
 	public ResponseEntity<byte[]> getPieChartImage(HttpSession session) {
-		return getPngImageByAttributeName(session, COUNTERPOINT_PIE_CHART_PNG_PATH);
+		Path pieChartPath = sessionHandler.getCounterpointPieChartPngPath();
+		return getPngFileFromPath(pieChartPath);
 	}
 
 	public ResponseEntity<byte[]> getPngImageByAttributeName(HttpSession session, String attributeName) {
@@ -83,11 +75,11 @@ public class AnalysisController {
 		if (!histogramPath.toFile().exists()) {
 			return new ResponseEntity<>(null, null, HttpStatus.NOT_FOUND);
 		}
-		
+
 		try {
 			byte[] imageBytes = Files.readAllBytes(histogramPath);
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.IMAGE_PNG); 
+			headers.setContentType(MediaType.IMAGE_PNG);
 			headers.setContentLength(imageBytes.length);
 			return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
 		} catch (IOException e) {
@@ -95,13 +87,13 @@ public class AnalysisController {
 			return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	
 	public ResponseEntity<byte[]> getCsvFileByAttributeName(HttpSession session, String attributeName) {
 		Path histogramPath = (Path) session.getAttribute(attributeName);
 		if (!histogramPath.toFile().exists()) {
 			return new ResponseEntity<>(null, null, HttpStatus.NOT_FOUND);
 		}
-		
+
 		try {
 			byte[] imageBytes = Files.readAllBytes(histogramPath);
 			HttpHeaders headers = new HttpHeaders();
@@ -115,18 +107,33 @@ public class AnalysisController {
 		}
 	}
 
-	@GetMapping("/image/{filename}")
-	@ResponseBody
-	public ResponseEntity<byte[]> getImage(HttpSession session, @PathVariable String filename) {
-		Path histogramPath = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_PNG_PATH);
-		if (!histogramPath.toFile().exists()) {
+	private ResponseEntity<byte[]> getCsvFileFromPath(Path path) {
+		if (!path.toFile().exists()) {
 			return new ResponseEntity<>(null, null, HttpStatus.NOT_FOUND);
 		}
-		
+	
 		try {
-			byte[] imageBytes = Files.readAllBytes(histogramPath);
+			byte[] imageBytes = Files.readAllBytes(path);
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.IMAGE_PNG); 
+			headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=counterpoint-histogram.csv");
+			headers.set(HttpHeaders.CONTENT_TYPE, "text/csv");
+			headers.setContentLength(imageBytes.length);
+			return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(null, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	private ResponseEntity<byte[]> getPngFileFromPath(Path path) {
+		if (!path.toFile().exists()) {
+			return new ResponseEntity<>(null, null, HttpStatus.NOT_FOUND);
+		}
+
+		try {
+			byte[] imageBytes = Files.readAllBytes(path);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.IMAGE_PNG);
 			headers.setContentLength(imageBytes.length);
 			return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
 		} catch (IOException e) {
@@ -142,9 +149,8 @@ public class AnalysisController {
 
 	@GetMapping("/analyze")
 	public String analyze(HttpSession session) {
-		@SuppressWarnings("unchecked")
-		Set<Path> midiFiles = (TreeSet<Path>) session.getAttribute(UPLOADED_MIDI_FILES_SET);
-		List<Analysis> analyses = new ArrayList<>();
+		Set<Path> midiFiles = sessionHandler.getUploadedMidiPaths();
+		List<Analysis> analyses = sessionHandler.getCounterpointAnalyses();
 		for (Path file : midiFiles) {
 			try {
 				Analyzer analyzer = new Analyzer(file.toFile());
@@ -153,11 +159,10 @@ public class AnalysisController {
 				e.printStackTrace();
 			}
 		}
-		session.setAttribute(COUNTERPOINT_ANALYSES_LIST, analyses);
 		recordAnalysisStatsInSession(session, analyses);
-		JFreeChart pieChart = generatePieChartFromSessionMidiFiles(session);
+		JFreeChart pieChart = generatePieChartFromSessionMidiFiles();
 		writeAndSavePieChartToSession(session, pieChart);
-		int binSize = (int) session.getAttribute(HISTOGRAM_BIN_SIZE_INT);
+		int binSize = sessionHandler.getHistogramBinSize();
 		CounterpointHistogramMaker counterpointHistogramMaker = new CounterpointHistogramMaker(analyses, binSize);
 		JFreeChart histogram = counterpointHistogramMaker.generateNormalizedHistogram();
 		try {
@@ -166,7 +171,7 @@ public class AnalysisController {
 			e.printStackTrace();
 		}
 		BufferedImage bufferedImage = histogram.createBufferedImage(WIDTH_PX, HEIGHT_PX, null);
-		File histogramPng = ((Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_PNG_PATH)).toFile();
+		File histogramPng = sessionHandler.getCounterpointHistogramPngPath().toFile();
 		try {
 			ImageIO.write(bufferedImage, "PNG", histogramPng);
 		} catch (IOException e) {
@@ -174,16 +179,16 @@ public class AnalysisController {
 		}
 		return "redirect:/analysis";
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param session
 	 * @param histogram A histogram with a dataset containing series of an equal number of items.
 	 * @throws IOException
 	 */
 	private void saveHistogramCsvInSession(HttpSession session, JFreeChart histogram) throws IOException {
 		XYIntervalSeriesCollection dataset = (XYIntervalSeriesCollection) histogram.getXYPlot().getDataset();
-		Path counterpointHistogramCsvPath = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_CSV_PATH);
+		Path counterpointHistogramCsvPath = sessionHandler.getCounterpointHistogramCsvPath();
 		try (FileWriter writer = new FileWriter(counterpointHistogramCsvPath.toFile())) {
 			// Write header row. TODO Refactor into private method.
 			writer.write("Bin");
@@ -193,7 +198,7 @@ public class AnalysisController {
 				writer.write(',');
 			}
 			writer.write('\n');
-			
+
 			if (dataset.getSeriesCount() < 1) { // TODO Handle with a flash attribute message.
 				throw new IllegalStateException("The histogram's dataset does not include any series!");
 			}
@@ -213,21 +218,22 @@ public class AnalysisController {
 			}
 		}
 	}
-	
+
 	private void writeAndSavePieChartToSession(HttpSession session, JFreeChart pieChart) {
 		BufferedImage bufferedImage = pieChart.createBufferedImage(WIDTH_PX, HEIGHT_PX, null);
-		File pieChartPng = ((Path) session.getAttribute(COUNTERPOINT_PIE_CHART_PNG_PATH)).toFile();
+		File pieChartPng = sessionHandler.getCounterpointPieChartPngPath().toFile();
 		try {
 			ImageIO.write(bufferedImage, "PNG", pieChartPng);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private JFreeChart generatePieChartFromSessionMidiFiles(HttpSession session) {
-		long numContraryMotionEvents = (long) session.getAttribute(TOTAL_CONTRARY_EVENTS_LONG);
-		long numSimilarMotionEvents = (long) session.getAttribute(TOTAL_SIMILAR_EVENTS_LONG);
-		long numObliqueMotionEvents = (long) session.getAttribute(TOTAL_OBLIQUE_EVENTS_LONG);
+
+	private JFreeChart generatePieChartFromSessionMidiFiles() {
+		
+		long numContraryMotionEvents = sessionHandler.getNumberOfContraryMotionEvents();
+		long numSimilarMotionEvents = sessionHandler.getNumberOfSimilarMotionEvents();
+		long numObliqueMotionEvents = sessionHandler.getNumberOfObliqueMotionEvents();
 		List<PieChartSegment> components = new ArrayList<>();
 		components.add(new PieChartSegment(CONTRARY_MOTION_EVENTS, numContraryMotionEvents, RED));
 		components.add(new PieChartSegment(SIMILAR_MOTION_EVENTS, numSimilarMotionEvents, BLUE));
@@ -245,9 +251,9 @@ public class AnalysisController {
 			numberOfSimilarMotionEvents += reporter.countMotionEventsOfType(ContrapuntalMotion.SIMILAR);
 			numberOfObliqueMotionEvents += reporter.countMotionEventsOfType(ContrapuntalMotion.OBLIQUE);
 		}
-		session.setAttribute(TOTAL_CONTRARY_EVENTS_LONG, numberOfContraryMotionEvents);
-		session.setAttribute(TOTAL_SIMILAR_EVENTS_LONG, numberOfSimilarMotionEvents);
-		session.setAttribute(TOTAL_OBLIQUE_EVENTS_LONG, numberOfObliqueMotionEvents);
+		sessionHandler.setNumberOfContraryMotionEvents(numberOfContraryMotionEvents);
+		sessionHandler.setNumberOfSimilarMotionEvents(numberOfSimilarMotionEvents);
+		sessionHandler.setNumberOfObliqueMotionEvents(numberOfObliqueMotionEvents);
 	}
 
 	private JFreeChart createPieChart(String title, List<PieChartSegment> segments, boolean createLegend) {

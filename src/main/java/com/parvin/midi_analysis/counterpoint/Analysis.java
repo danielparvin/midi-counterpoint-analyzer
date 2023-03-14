@@ -15,7 +15,7 @@ public final class Analysis {
 	private final List<MotionEvent> motionEvents;
 	private final long ticks;
 	private final int trackNumber;
-	
+
 	/**
 	 * Generate a counterpoint analysis of two MIDI tracks.
 	 * @param filename The name of the MIDI file.
@@ -24,7 +24,7 @@ public final class Analysis {
 	 * @param comparisonTrackNumber The comparison track.
 	 * @param motionEvents Contrapuntal motion events ocurring at specific ticks.
 	 */
-	public Analysis(String filename, long ticks, int trackNumber, int comparisonTrackNumber, 
+	public Analysis(String filename, long ticks, int trackNumber, int comparisonTrackNumber,
 			List<MotionEvent> motionEvents) {
 		this.filename = filename;
 		this.ticks = ticks;
@@ -48,7 +48,7 @@ public final class Analysis {
 	public List<MotionEvent> getMotionEvents() {
 		return Collections.unmodifiableList(motionEvents);
 	}
-	
+
 	/**
 	 * Get the length of the analysis in MIDI ticks.
 	 * @return Length in ticks.

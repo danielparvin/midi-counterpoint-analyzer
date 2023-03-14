@@ -7,7 +7,7 @@ package com.parvin.midi_analysis.counterpoint.events;
 public class MotionEvent {
 	private ContrapuntalMotion motion;
 	private long tick;
-	
+
 	public MotionEvent(ContrapuntalMotion motion, long tick) {
 		this.motion = motion;
 		this.tick = tick;

@@ -14,10 +14,10 @@ By uploading a ZIP file containing multiple MIDI files, users can analyze many p
 In development
 
 ### To-do List
-- Provide a demo MIDI file for users who want to quickly try the app without having to find or download MIDI files themselves (Monday) (https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1780).
-- Handle flash attribute "message" on analysis page to inform user when an upload fails (Monday).
+- Handle flash attribute "message" on analysis page to inform user when an upload fails (Tuesday).
 - Analyze Bach's Two-part Inventions.
   - Evaluate contrapuntal motion trends in fast vs. slow inventions (Tuesday).
-- Ask colleagues for feedback (Wednesday).
-- Incorporate feedback (Monday, March 20).
+- Continue refactoring back-end, SessionHandler.
+- Ask colleagues for front-end feedback (Wednesday).
+- Incorporate feedback (Monday, March 20); ask other colleagues for back-end feedback.
 - Record a demo video, describing and demonstrating the app, the Bach Inventions case study, and the limitations of the algorithm (Tuesday, March 21).

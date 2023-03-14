@@ -8,7 +8,7 @@ package com.parvin.midi_analysis.counterpoint.events;
 public final class NotePlayedEvent {
 	private final int note;
 	private final long tick;
-	
+
 	/**
 	 * Make a new event representing the moment in time (the "tick") at which a note is played.
 	 * @param note The raw MIDI byte number of the note occurring in this event.

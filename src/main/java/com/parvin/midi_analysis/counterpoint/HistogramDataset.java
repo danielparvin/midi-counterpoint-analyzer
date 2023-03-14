@@ -9,7 +9,7 @@ public class HistogramDataset {
 	private double binSize;
 	private double maxValue;
 	private double minValue;
-	
+
 	public HistogramDataset(double minValue, double maxValue, double binSize) {
 		this.minValue = minValue;
 		this.maxValue = maxValue;
@@ -48,7 +48,7 @@ public class HistogramDataset {
 	public int getFrequencyAtBin(int binNumber) {
 		return frequencyData[binNumber];
 	}
-	
+
 	public int getFrequencyOfValue(double value) {
 		return frequencyData[calculateRelevantBin(value)];
 	}
