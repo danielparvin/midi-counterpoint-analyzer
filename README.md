@@ -14,10 +14,7 @@ By uploading a ZIP file containing multiple MIDI files, users can analyze many p
 In development
 
 ### To-do List
-- Handle flash attribute "message" on analysis page to inform user when an upload fails (Tuesday).
-- Analyze Bach's Two-part Inventions.
-  - Evaluate contrapuntal motion trends in fast vs. slow inventions (Tuesday).
-- Continue refactoring back-end, SessionHandler.
 - Ask colleagues for front-end feedback (Wednesday).
+- Continue refactoring back-end, SessionHandler (Thursday).
 - Incorporate feedback (Monday, March 20); ask other colleagues for back-end feedback.
 - Record a demo video, describing and demonstrating the app, the Bach Inventions case study, and the limitations of the algorithm (Tuesday, March 21).

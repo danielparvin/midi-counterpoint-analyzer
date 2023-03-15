@@ -68,6 +68,9 @@
 	<!-- Display the upload form on the analysis page by default. -->
 	<div class="main container pt-3"
 		th:if="${#lists.isEmpty(session.uploadedFiles)}">
+		<div class="col text-center text-md-start" th:if="${message}">
+			<h3 th:text="${message}"></h3>
+		</div>
 		<div class="col text-center text-md-start">
 			<h3>Upload a .midi, .mid, or .zip file for analysis!</h3>
 			<form method="POST" enctype="multipart/form-data" action="/upload"

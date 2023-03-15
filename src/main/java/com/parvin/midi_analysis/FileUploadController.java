@@ -33,7 +33,13 @@ public class FileUploadController {
 		sessionHandler.clearCounterpointAnalyses();
 		String originalFilename = file.getOriginalFilename();
 		if (filenameHasExtension(originalFilename, "mid", "midi")) {
-			handleMidiFile(file, redirectAttributes);
+			try {
+				handleMidiFile(file);
+			} catch (Exception e) {
+				e.printStackTrace();
+				redirectAttributes.addFlashAttribute( // TODO Figure out how to pass this to the analysis page.
+						SessionHandler.MESSAGE, "At least one MIDI file failed to upload!");
+			}
 		} else if (filenameHasExtension(originalFilename, "zip")) {
 			handleZipFile(file, redirectAttributes);
 		} else {
@@ -43,17 +49,12 @@ public class FileUploadController {
 		return "redirect:/analyze";
 	}
 
-	private void handleMidiFile(MultipartFile file, RedirectAttributes redirectAttributes) {
+	private void handleMidiFile(MultipartFile file) throws IllegalStateException, IOException {
 		Set<Path> uploadedFiles = sessionHandler.getUploadedMidiPaths();
 		Path tempDirectory = sessionHandler.getTempDirectoryPath();
-		try {
-			Path uploadedFile = tempDirectory.resolve(file.getOriginalFilename());
-			file.transferTo(uploadedFile);
-			uploadedFiles.add(uploadedFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Upload failed.");
-		}
+		Path uploadedFile = tempDirectory.resolve(file.getOriginalFilename());
+		file.transferTo(uploadedFile);
+		uploadedFiles.add(uploadedFile);
 	}
 
 	private void handleZipFile(MultipartFile file, RedirectAttributes redirectAttributes) {
@@ -77,14 +78,15 @@ public class FileUploadController {
 						uploadedFiles.add(uploadedFile);
 					} catch (IOException e) {
 						e.printStackTrace();
+						redirectAttributes.addFlashAttribute(
+								SessionHandler.MESSAGE, "At least one MIDI file failed to upload!");
 					}
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Upload failed.");
+			redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Upload failed!");
 		}
-		redirectAttributes.addFlashAttribute(SessionHandler.MESSAGE, "Uploaded files successfully!");
 	}
 
 	/**
