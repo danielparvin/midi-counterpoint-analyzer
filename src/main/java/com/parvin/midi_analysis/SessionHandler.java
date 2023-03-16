@@ -43,11 +43,12 @@ public class SessionHandler {
 	private HttpSession session;
 	
 	public void clearCounterpointAnalyses() {
+		@SuppressWarnings("unchecked")
 		List<Analysis> analyses = (List<Analysis>) session.getAttribute(COUNTERPOINT_ANALYSES);
 		analyses.clear();
 	}
 
-	public void deleteAnalysisCsvAndPngFiles() {
+	public void deleteAnalysisCsvAndPngFiles(HttpSession session) {
 		@SuppressWarnings("unchecked")
 		Path counterpointHistogramCsv = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_CSV);
 		Path counterpointHistogramPng = (Path) session.getAttribute(COUNTERPOINT_HISTOGRAM_PNG);
@@ -61,7 +62,7 @@ public class SessionHandler {
 		}
 	}
 
-	public void deleteUploadedFiles() {
+	public void deleteUploadedFiles(HttpSession session) {
 		@SuppressWarnings("unchecked")
 		Set<Path> uploadedFiles = (Set<Path>) session.getAttribute(UPLOADED_MIDI_FILES);
 		for (Path path: uploadedFiles) {
@@ -100,6 +101,30 @@ public class SessionHandler {
 		return (Path) session.getAttribute(COUNTERPOINT_PIE_CHART_PNG);
 	}
 	
+	public long getNumberOfContraryMotionEvents() {
+		if (session.getAttribute(TOTAL_CONTRARY_EVENTS) != null) {
+			return (long) session.getAttribute(TOTAL_CONTRARY_EVENTS);
+		} else {
+			return 0L;
+		}
+	}
+
+	public long getNumberOfObliqueMotionEvents() {
+		if (session.getAttribute(TOTAL_OBLIQUE_EVENTS) != null) {
+			return (long) session.getAttribute(TOTAL_OBLIQUE_EVENTS);
+		} else {
+			return 0L;
+		}
+	}
+
+	public long getNumberOfSimilarMotionEvents() {
+		if (session.getAttribute(TOTAL_SIMILAR_EVENTS) != null) {
+			return (long) session.getAttribute(TOTAL_SIMILAR_EVENTS);
+		} else {
+			return 0L;
+		}
+	}
+
 	public Path getTempDirectoryPath() {
 		return (Path) session.getAttribute(TEMP_DIRECTORY);
 	}
@@ -135,46 +160,22 @@ public class SessionHandler {
 	public ApplicationListener<HttpSessionDestroyedEvent> logoutListener() {
 		return event -> {
 			HttpSession destroyedSession = event.getSession();
-			deleteUploadedFiles();
-			deleteAnalysisCsvAndPngFiles();
+			deleteUploadedFiles(destroyedSession);
+			deleteAnalysisCsvAndPngFiles(destroyedSession);
 			deleteTempDirectory(destroyedSession);
 		};
-	}
-
-	public long getNumberOfContraryMotionEvents() {
-		if (session.getAttribute(TOTAL_CONTRARY_EVENTS) != null) {
-			return (long) session.getAttribute(TOTAL_CONTRARY_EVENTS);
-		} else {
-			return 0L;
-		}
-	}
-	
-	public long getNumberOfSimilarMotionEvents() {
-		if (session.getAttribute(TOTAL_SIMILAR_EVENTS) != null) {
-			return (long) session.getAttribute(TOTAL_SIMILAR_EVENTS);
-		} else {
-			return 0L;
-		}
-	}
-	
-	public long getNumberOfObliqueMotionEvents() {
-		if (session.getAttribute(TOTAL_OBLIQUE_EVENTS) != null) {
-			return (long) session.getAttribute(TOTAL_OBLIQUE_EVENTS);
-		} else {
-			return 0L;
-		}
 	}
 
 	public void setNumberOfContraryMotionEvents(long numberOfContraryMotionEvents) {
 		session.setAttribute(TOTAL_CONTRARY_EVENTS, numberOfContraryMotionEvents);
 	}
 
-	public void setNumberOfSimilarMotionEvents(long numberOfSimilarMotionEvents) {
-		session.setAttribute(TOTAL_SIMILAR_EVENTS, numberOfSimilarMotionEvents);
-	}
-
 	public void setNumberOfObliqueMotionEvents(long numberOfObliqueMotionEvents) {
 		session.setAttribute(TOTAL_OBLIQUE_EVENTS, numberOfObliqueMotionEvents);
+	}
+
+	public void setNumberOfSimilarMotionEvents(long numberOfSimilarMotionEvents) {
+		session.setAttribute(TOTAL_SIMILAR_EVENTS, numberOfSimilarMotionEvents);
 	}
 
 	private void deleteTempDirectory(HttpSession session) {

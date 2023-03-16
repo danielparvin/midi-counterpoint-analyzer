@@ -33,8 +33,8 @@ public class CounterpointHistogramMaker {
 		HistogramDataset obliqueHistogram = new HistogramDataset(0, 100, binSize);
 
 		for (Analysis analysis: analyses) {
-			final long totalTicks = analysis.getTicks();
-			List<NormalizedMotionEvent> normalizedMotionEvents = analysis.getMotionEvents().stream()
+			final long totalTicks = analysis.ticks();
+			List<NormalizedMotionEvent> normalizedMotionEvents = analysis.motionEvents().stream()
 					.map(event -> new NormalizedMotionEvent(event.getMotion(), event.getTick(), totalTicks))
 					.toList();
 			for (NormalizedMotionEvent normalizedEvent: normalizedMotionEvents) {

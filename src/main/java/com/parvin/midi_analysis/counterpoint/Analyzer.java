@@ -71,7 +71,7 @@ public final class Analyzer {
 		List<Analysis> analyses = new ArrayList<>();
 		List<MotionEvent> motionEvents = getMotionEvents(tracks[trackNumber], tracks[comparisonTrackNumber]);
 		long ticks = Math.max(tracks[trackNumber].ticks(), tracks[comparisonTrackNumber].ticks());
-		analyses.add(new Analysis(filename, ticks, trackNumber, comparisonTrackNumber, motionEvents));
+		analyses.add(new Analysis(trackNumber, comparisonTrackNumber, filename, motionEvents, ticks));
 		return analyses;
 	}
 
@@ -119,17 +119,17 @@ public final class Analyzer {
 			return intervalEvents;
 		}
 
-		int previousNote = notePlayedEvents.get(0).getNote();
-		long previousTick = notePlayedEvents.get(0).getTick();
+		int previousNote = notePlayedEvents.get(0).note();
+		long previousTick = notePlayedEvents.get(0).tick();
 		for (int i = 1; i < notePlayedEvents.size(); i++) { // The first interval is between the first and second notes.
 			NotePlayedEvent noteOnEvent = notePlayedEvents.get(i);
-			int currentNote = noteOnEvent.getNote();
-			long currentTick = noteOnEvent.getTick();
+			int currentNote = noteOnEvent.note();
+			long currentTick = noteOnEvent.tick();
 			if (currentTick > previousTick) {
 				intervalEvents.add(new IntervalEvent(currentNote - previousNote, currentTick));
 			} else if (currentTick == previousTick && currentNote > previousNote) { // Use the highest note of the tick.
-					intervalEvents.remove(intervalEvents.size() - 1);
-					intervalEvents.add(new IntervalEvent(currentNote - previousNote, currentTick));
+				intervalEvents.remove(intervalEvents.size() - 1);
+				intervalEvents.add(new IntervalEvent(currentNote - previousNote, currentTick));
 			}
 			previousNote = currentNote;
 			previousTick = currentTick;
@@ -149,12 +149,12 @@ public final class Analyzer {
 		Iterator<IntervalEvent> comparisonEventsIterator = comparisonIntervalEvents.iterator();
 		IntervalEvent comparisonEvent;
 		for (IntervalEvent event : intervalEvents) {
-			eventInterval = event.getInterval();
-			eventTick = event.getTick();
+			eventInterval = event.interval();
+			eventTick = event.tick();
 			while (comparisonEventsIterator.hasNext() && comparisonEventTick < eventTick) {
 				comparisonEvent = comparisonEventsIterator.next();
-				comparisonEventInterval = comparisonEvent.getInterval();
-				comparisonEventTick = comparisonEvent.getTick();
+				comparisonEventInterval = comparisonEvent.interval();
+				comparisonEventTick = comparisonEvent.tick();
 			}
 			if (eventTick == comparisonEventTick) {
 				ContrapuntalMotion motion = getContrapuntalMotion(eventInterval, comparisonEventInterval);
@@ -169,13 +169,11 @@ public final class Analyzer {
 		List<NotePlayedEvent> noteOnEvents = new ArrayList<>();
 		for (int i = 0; i < track.size(); i++) {
 			MidiEvent event = track.get(i);
-			if (event.getMessage() instanceof ShortMessage) {
-				ShortMessage shortMessage = (ShortMessage) event.getMessage();
-				if (shortMessage.getCommand() == ShortMessage.NOTE_ON
-						// A Note On message with a velocity of zero often substitutes for a Note Off message.
-						&& shortMessage.getData2() != 0) {
-					noteOnEvents.add(new NotePlayedEvent(shortMessage.getData1(), event.getTick()));
-				}
+			if (event.getMessage() instanceof ShortMessage shortMessage 
+					&& shortMessage.getCommand() == ShortMessage.NOTE_ON
+					// (A Note On message with a velocity of zero often substitutes for a Note Off message.)
+					&& shortMessage.getData2() != 0) {
+				noteOnEvents.add(new NotePlayedEvent(shortMessage.getData1(), event.getTick()));
 			}
 		}
 

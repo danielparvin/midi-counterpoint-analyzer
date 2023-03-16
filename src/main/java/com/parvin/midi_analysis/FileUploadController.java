@@ -28,8 +28,8 @@ public class FileUploadController {
 	public String handleUpload(HttpSession session,
 			@RequestParam("file") MultipartFile file,
 			RedirectAttributes redirectAttributes) {
-		sessionHandler.deleteUploadedFiles();
-		sessionHandler.deleteAnalysisCsvAndPngFiles();
+		sessionHandler.deleteUploadedFiles(session);
+		sessionHandler.deleteAnalysisCsvAndPngFiles(session);
 		sessionHandler.clearCounterpointAnalyses();
 		String originalFilename = file.getOriginalFilename();
 		if (filenameHasExtension(originalFilename, "mid", "midi")) {
@@ -82,6 +82,7 @@ public class FileUploadController {
 								SessionHandler.MESSAGE, "At least one MIDI file failed to upload!");
 					}
 				}
+				Files.delete(zipFile.toPath());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

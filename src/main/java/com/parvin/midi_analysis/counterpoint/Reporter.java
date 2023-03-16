@@ -34,9 +34,9 @@ public class Reporter {
 
 		List<MotionEvent> motionEvents;
 		if (fromPercentage == ZERO && toPercentage == ONE_HUNDRED) {
-			motionEvents = analysis.getMotionEvents();
+			motionEvents = analysis.motionEvents();
 		} else {
-			long totalTicks = analysis.getTicks();
+			long totalTicks = analysis.ticks();
 			// Convert percentage section threshold values to absolute (tick) values.
 			long firstTick = (long) (fromPercentage / ONE_HUNDRED * totalTicks);
 			long lastTick = (long) (toPercentage / ONE_HUNDRED * totalTicks);
@@ -47,7 +47,7 @@ public class Reporter {
 	}
 
 	private List<MotionEvent> getPortionOfAnalysis(long firstTick, long lastTick) {
-		return analysis.getMotionEvents()
+		return analysis.motionEvents()
 				.stream()
 				.filter(e -> e.getTick() >= firstTick && e.getTick() <= lastTick)
 				.toList();

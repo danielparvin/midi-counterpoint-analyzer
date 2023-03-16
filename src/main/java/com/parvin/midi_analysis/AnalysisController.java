@@ -160,14 +160,14 @@ public class AnalysisController {
 				e.printStackTrace();
 			}
 		}
-		recordAnalysisStatsInSession(session, analyses);
+		recordAnalysisStatsInSession(analyses);
 		JFreeChart pieChart = generatePieChartFromSessionMidiFiles();
-		writeAndSavePieChartToSession(session, pieChart);
+		writeAndSavePieChartToSession(pieChart);
 		int binSize = sessionHandler.getHistogramBinSize();
 		CounterpointHistogramMaker counterpointHistogramMaker = new CounterpointHistogramMaker(analyses, binSize);
 		JFreeChart histogram = counterpointHistogramMaker.generateNormalizedHistogram();
 		try {
-			saveHistogramCsvInSession(session, histogram);
+			saveHistogramCsvInSession(histogram);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -184,15 +184,14 @@ public class AnalysisController {
 
 	/**
 	 *
-	 * @param session
 	 * @param histogram A histogram with a dataset containing series of an equal number of items.
 	 * @throws IOException
 	 */
-	private void saveHistogramCsvInSession(HttpSession session, JFreeChart histogram) throws IOException {
+	private void saveHistogramCsvInSession(JFreeChart histogram) throws IOException {
 		XYIntervalSeriesCollection dataset = (XYIntervalSeriesCollection) histogram.getXYPlot().getDataset();
 		Path counterpointHistogramCsvPath = sessionHandler.getCounterpointHistogramCsvPath();
 		try (FileWriter writer = new FileWriter(counterpointHistogramCsvPath.toFile())) {
-			// Write header row. TODO Refactor into private method.
+			// Write header row.
 			writer.write("Bin");
 			writer.write(',');
 			for (int seriesNumber = 0; seriesNumber < dataset.getSeriesCount(); seriesNumber++) {
@@ -221,7 +220,7 @@ public class AnalysisController {
 		}
 	}
 
-	private void writeAndSavePieChartToSession(HttpSession session, JFreeChart pieChart) {
+	private void writeAndSavePieChartToSession(JFreeChart pieChart) {
 		BufferedImage bufferedImage = pieChart.createBufferedImage(WIDTH_PX, HEIGHT_PX, null);
 		File pieChartPng = sessionHandler.getCounterpointPieChartPngPath().toFile();
 		try {
@@ -243,7 +242,7 @@ public class AnalysisController {
 		return createPieChart(null, components, false);
 	}
 
-	private void recordAnalysisStatsInSession(HttpSession session, List<Analysis> analyses) {
+	private void recordAnalysisStatsInSession(List<Analysis> analyses) {
 		long numberOfContraryMotionEvents = 0L;
 		long numberOfSimilarMotionEvents = 0L;
 		long numberOfObliqueMotionEvents = 0L;
