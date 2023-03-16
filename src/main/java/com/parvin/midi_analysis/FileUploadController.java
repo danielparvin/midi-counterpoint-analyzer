@@ -28,8 +28,8 @@ public class FileUploadController {
 	public String handleUpload(HttpSession session,
 			@RequestParam("file") MultipartFile file,
 			RedirectAttributes redirectAttributes) {
-		sessionHandler.deleteUploadedFiles(session);
-		sessionHandler.deleteAnalysisCsvAndPngFiles(session);
+		sessionHandler.deleteUploadedFiles();
+		sessionHandler.deleteAnalysisCsvAndPngFiles();
 		sessionHandler.clearCounterpointAnalyses();
 		String originalFilename = file.getOriginalFilename();
 		if (filenameHasExtension(originalFilename, "mid", "midi")) {

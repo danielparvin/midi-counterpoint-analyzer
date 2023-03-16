@@ -20,8 +20,8 @@ public class DemoController {
 	
 	@GetMapping("/demo")
 	public String getDemoAnalysis(HttpSession session) throws IOException {
-		sessionHandler.deleteUploadedFiles(session);
-		sessionHandler.deleteAnalysisCsvAndPngFiles(session);
+		sessionHandler.deleteUploadedFiles();
+		sessionHandler.deleteAnalysisCsvAndPngFiles();
 		sessionHandler.clearCounterpointAnalyses();
 		Set<Path> uploadedFiles = sessionHandler.getUploadedMidiPaths();
 		Path tempDirectory = sessionHandler.getTempDirectoryPath();
