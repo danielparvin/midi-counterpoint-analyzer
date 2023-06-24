@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,8 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 import javax.sound.midi.InvalidMidiDataException;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
@@ -190,16 +193,16 @@ public class AnalysisController {
 	private void saveHistogramCsvInSession(JFreeChart histogram) throws IOException {
 		XYIntervalSeriesCollection dataset = (XYIntervalSeriesCollection) histogram.getXYPlot().getDataset();
 		Path counterpointHistogramCsvPath = sessionHandler.getCounterpointHistogramCsvPath();
-		try (FileWriter writer = new FileWriter(counterpointHistogramCsvPath.toFile())) {
+		try (CSVPrinter printer = new CSVPrinter(
+				new FileWriter(counterpointHistogramCsvPath.toFile()), CSVFormat.EXCEL)) {
 			// Write header row.
-			writer.write("Bin");
-			writer.write(',');
+			printer.print("Bin");
 			for (int seriesNumber = 0; seriesNumber < dataset.getSeriesCount(); seriesNumber++) {
-				writer.write((String) dataset.getSeries(seriesNumber).getKey()); // e.g. "Contrary Motion Events"
-				writer.write(',');
+				String columnName = (String) dataset.getSeries(seriesNumber).getKey();
+				printer.print(columnName + " (total)");
+				printer.print(columnName + " (%)"); 
 			}
-			writer.write('\n');
-
+			printer.println();
 			if (dataset.getSeriesCount() < 1) {
 				throw new IllegalStateException("The histogram's dataset does not include any series!");
 			}
@@ -208,16 +211,35 @@ public class AnalysisController {
 			for (int binNumber = 0; binNumber < numberOfBins; binNumber++) {
 				double xLow = modelSeries.getXLowValue(binNumber);
 				double xHigh = modelSeries.getXHighValue(binNumber);
-				writer.write(xLow + "-" + xHigh + "%");
-				writer.write(',');
-				for (int seriesNumber = 0; seriesNumber < dataset.getSeriesCount(); seriesNumber++) {
-					XYIntervalSeries series = dataset.getSeries(seriesNumber);
-					writer.write(String.valueOf((int) series.getYValue(binNumber)));
-					writer.write(',');
+				printer.print(xLow + "-" + xHigh + "%");
+				List<Integer> seriesTotalsAtBin = getSeriesTotalsAtBin(dataset, binNumber);
+				List<Double> percentagesAtBin = convertCountsToPercentages(seriesTotalsAtBin);
+				for (int seriesNumber = 0; seriesNumber < seriesTotalsAtBin.size(); seriesNumber++) {
+					int countsAtBinForCurrentSeries = seriesTotalsAtBin.get(seriesNumber);
+					double percentageAtBinForCurrentSeries = percentagesAtBin.get(seriesNumber);
+					DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+					printer.print(countsAtBinForCurrentSeries);
+					printer.print(decimalFormat.format(percentageAtBinForCurrentSeries));
 				}
-				writer.write('\n');
+				printer.println();
 			}
 		}
+	}
+	
+	private List<Integer> getSeriesTotalsAtBin(XYIntervalSeriesCollection dataset, int binNumber) {
+		List<Integer> seriesTotalsAtBin = new ArrayList<>();
+		for (int seriesNumber = 0; seriesNumber < dataset.getSeriesCount(); seriesNumber++) {
+			XYIntervalSeries series = dataset.getSeries(seriesNumber);
+			seriesTotalsAtBin.add((int) series.getYValue(binNumber));
+		}
+		return seriesTotalsAtBin;
+	}
+
+	private List<Double> convertCountsToPercentages(List<Integer> counts) {
+		int totalCounts = counts.stream().reduce((x, y) -> x + y).orElseGet(() -> 0);
+		return counts.stream()
+				.map(x -> totalCounts == 0 ? 0.0 : x / (double) totalCounts * 100)
+				.toList();
 	}
 
 	private void writeAndSavePieChartToSession(JFreeChart pieChart) {

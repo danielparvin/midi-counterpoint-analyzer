@@ -37,7 +37,7 @@ public class FileUploadController {
 				handleMidiFile(file);
 			} catch (Exception e) {
 				e.printStackTrace();
-				redirectAttributes.addFlashAttribute( // TODO Figure out how to pass this to the analysis page.
+				redirectAttributes.addFlashAttribute(
 						SessionHandler.MESSAGE, "At least one MIDI file failed to upload!");
 			}
 		} else if (filenameHasExtension(originalFilename, "zip")) {

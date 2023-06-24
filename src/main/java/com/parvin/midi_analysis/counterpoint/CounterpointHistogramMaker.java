@@ -74,11 +74,9 @@ public class CounterpointHistogramMaker {
 		plot.setOrientation(PlotOrientation.VERTICAL);
 		plot.setBackgroundPaint(Color.LIGHT_GRAY);
 		boolean showLegend = false;
-		JFreeChart histogram = new JFreeChart("Frequency of Contrapuntal Motion Events",
+		return new JFreeChart("Frequency of Contrapuntal Motion Events",
 				JFreeChart.DEFAULT_TITLE_FONT,
 				plot,
 				showLegend);
-		// new StandardChartTheme("JFree").apply(histogram); // TODO Finish styling this histogram chart.
-		return histogram;
 	}
 }
