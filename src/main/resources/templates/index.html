@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" lang="en">
 <head th:replace="fragments :: head">
-	<title>MIDI Analyzer</title>
+<title>MIDI Counterpoint Analyzer</title>
 </head>
 <body>
 	<header th:replace="fragments :: header"></header>
@@ -19,26 +19,41 @@
 		</div>
 		<div class="row">
 			<div class="col pt-3">
-				<h3><em>Or</em> analyze <a href="/demo">Row, Row, Row Your Boat</a> as a four-part canon!</h3>
+				<h3>
+					<em>Or</em> analyze <a href="/demo">Row, Row, Row Your Boat</a> as
+					a four-part canon!
+				</h3>
 			</div>
 		</div>
+		<hr>
 		<div class="info pt-2">
-			<figure class="float-end mx-1"><img src="/images/midi-visualization.png" width="200" height="139"
-				alt="A visual representation of a MIDI file">
-				<figcaption class="figure-caption text-center">Visualization of a MIDI file</figcaption></figure>
+			<figure class="float-end mx-1">
+				<img src="/images/midi-visualization.png" width="200" height="139"
+					alt="A visual representation of a MIDI file">
+				<figcaption class="figure-caption text-center">Visualization
+					of a MIDI file</figcaption>
+			</figure>
+			<h4>What is this tool?</h4>
 			<p>This tool performs a counterpoint analysis on the musical
 				"voices" within a MIDI file. A MIDI file contains information about
-				the musical notes played at specific times. It
-				specifies when each note occurs throughout a piece of
-				music. Although
-				MIDI is not an audio file format, you can play MIDI files on a computer and
-				on many electronic keyboards.</p>
+				the musical notes played at specific times. It specifies when each
+				note occurs throughout a piece of music. Although MIDI is not an
+				audio file format, you can play MIDI files on a computer and on many
+				electronic keyboards.</p>
+			<h4>What is counterpoint?</h4>
 			<p>In music theory, "counterpoint" refers to the analysis of how
 				musical "voices," or distinct parts or lines, interact with and
 				relate to each other. For example, how does a trumpet part relate to
-				a trombone part, or how does a violin part relate to a cello part? 
-				When the violin notes go up, do the cello notes go down? These are the kinds
-				of questions that counterpoint analysis seeks to answer.</p>
+				a trombone part, or how does a violin part relate to a cello part?
+				When the violin notes go up, do the cello notes go down? These are
+				the kinds of questions that counterpoint analysis seeks to answer.</p>
+			<h4>What are the types of counterpoint?</h4>
+			<ol id="types-of-counterpoint">
+				<li>Similar</li>
+				<li>Parallel</li>
+				<li>Oblique</li>
+				<li>Contrary</li>
+			</ol>
 			<p>
 				When two voices play at the same time, they can move in various
 				directions relative to each other. The four types of contrapuntal

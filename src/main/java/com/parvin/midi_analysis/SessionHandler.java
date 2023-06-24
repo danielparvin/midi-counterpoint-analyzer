@@ -81,7 +81,7 @@ public class SessionHandler {
 	
 	@SuppressWarnings("unchecked")
 	public List<Analysis> getCounterpointAnalyses() {
-		return (List<Analysis>) session.getAttribute(COUNTERPOINT_ANALYSES); // TODO Return immutable collection.
+		return (List<Analysis>) session.getAttribute(COUNTERPOINT_ANALYSES);
 	}
 	
 	@SuppressWarnings("unchecked")

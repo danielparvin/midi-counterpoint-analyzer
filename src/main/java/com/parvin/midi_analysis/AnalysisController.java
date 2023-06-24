@@ -200,7 +200,7 @@ public class AnalysisController {
 			}
 			writer.write('\n');
 
-			if (dataset.getSeriesCount() < 1) { // TODO Handle with a flash attribute message.
+			if (dataset.getSeriesCount() < 1) {
 				throw new IllegalStateException("The histogram's dataset does not include any series!");
 			}
 			XYIntervalSeries modelSeries = dataset.getSeries(0);
