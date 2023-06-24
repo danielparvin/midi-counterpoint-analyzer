@@ -43,6 +43,7 @@ hr:after {
 #files-analyzed {
 	background-color: var(--bs-gray-200);
 	margin-bottom: 1rem;
+	padding-top: 1rem;
 }
 
 #files-analyzed ul {

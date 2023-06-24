@@ -10,31 +10,42 @@
 		<h2 class="text-center">Analysis</h2>
 		<hr>
 		<div id="pie-chart-section" class="row mb-3">
-			<div class="col-md-6">
-				<figure class="text-center float-md-end">
-					<img src="/analysis/pie-chart" width="300px" height="300px"
-						alt="Pie chart of contrapuntal motion events.">
-					<figcaption class="figure-caption text-center">All
-						Motion Events</figcaption>
-				</figure>
+			<div id="files-analyzed" class="col-sm-12 col-md-6" th:inline="text">
+				<h3 class="text-center text-md-start">Files analyzed:</h3>
+				<ul>
+					<li th:each="file: ${session.uploadedFiles}"
+						th:text="${file.getFileName}"></li>
+				</ul>
 			</div>
-			<div id="pie-chart-text-summary"
-				th:with="totalEvents=${session.totalContraryEvents} + ${session.totalSimilarEvents} + ${session.totalObliqueEvents},
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col">
+						<figure class="text-center float-md-end">
+							<img src="/analysis/pie-chart" width="300px" height="300px"
+								alt="Pie chart of contrapuntal motion events.">
+							<figcaption class="figure-caption text-center">All
+								Motion Events</figcaption>
+						</figure>
+					</div>
+					<div id="pie-chart-text-summary"
+						th:with="totalEvents=${session.totalContraryEvents} + ${session.totalSimilarEvents} + ${session.totalObliqueEvents},
 				contraryPercentage=${session.totalContraryEvents} / ${totalEvents} * 100,
 				similarPercentage=${session.totalSimilarEvents} / ${totalEvents} * 100,
 				obliquePercentage=${session.totalObliqueEvents} / ${totalEvents} * 100"
-				class="col-md-6 my-auto text-center text-md-start" th:inline="text">
-				<ul class="legend">
-					<li class="red-point">Total Contrary Motion Events: <strong>[[${session.totalContraryEvents}]]</strong>
-						([[${#numbers.formatDecimal(contraryPercentage,1,2)}]]%)
-					</li>
-					<li class="blue-point">Total Similar Motion Events: <strong>[[${session.totalSimilarEvents}]]</strong>
-						([[${#numbers.formatDecimal(similarPercentage,1,2)}]]%)
-					</li>
-					<li class="green-point">Total Oblique Motion Events: <strong>[[${session.totalObliqueEvents}]]</strong>
-						([[${#numbers.formatDecimal(obliquePercentage,1,2)}]]%)
-					</li>
-				</ul>
+						class="col my-auto text-center text-md-start" th:inline="text">
+						<ul class="legend">
+							<li class="red-point">Contrary Motion Events: <strong>[[${session.totalContraryEvents}]]</strong>
+								([[${#numbers.formatDecimal(contraryPercentage,1,2)}]]%)
+							</li>
+							<li class="blue-point">Similar Motion Events: <strong>[[${session.totalSimilarEvents}]]</strong>
+								([[${#numbers.formatDecimal(similarPercentage,1,2)}]]%)
+							</li>
+							<li class="green-point">Oblique Motion Events: <strong>[[${session.totalObliqueEvents}]]</strong>
+								([[${#numbers.formatDecimal(obliquePercentage,1,2)}]]%)
+							</li>
+						</ul>
+					</div>
+				</div>
 			</div>
 		</div>
 		<hr>
@@ -58,15 +69,7 @@
 		</div>
 		<hr>
 		<div id="analysis-uploads" class="row">
-			<div id="files-analyzed" class="col-md-3" th:inline="text">
-				<h3 class="text-center text-md-start">Files analyzed:</h3>
-				<ul>
-					<li th:each="file: ${session.uploadedFiles}"
-						th:text="${file.getFileName}"></li>
-				</ul>
-			</div>
-			<hr class="d-md-none">
-			<div class="col-md-9 mb-auto text-center text-md-start">
+			<div class="col-md-12 mb-auto text-center text-md-start">
 				<h3>Upload another MIDI file!</h3>
 				<form method="POST" enctype="multipart/form-data" action="/upload"
 					id="upload-form">
