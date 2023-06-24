@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" lang="en">
-<head th:replace="fragments :: head"><title>MIDI Counterpoint Analysis</title></head>
+<head th:replace="fragments :: head">
+<title>MIDI Counterpoint Analysis</title>
+</head>
 <body>
 	<header th:replace="fragments :: header"></header>
 	<div class="main container pt-3"
@@ -17,11 +19,21 @@
 				</figure>
 			</div>
 			<div id="pie-chart-text-summary"
+				th:with="totalEvents=${session.totalContraryEvents} + ${session.totalSimilarEvents} + ${session.totalObliqueEvents},
+				contraryPercentage=${session.totalContraryEvents} / ${totalEvents} * 100,
+				similarPercentage=${session.totalSimilarEvents} / ${totalEvents} * 100,
+				obliquePercentage=${session.totalObliqueEvents} / ${totalEvents} * 100"
 				class="col-md-6 my-auto text-center text-md-start" th:inline="text">
 				<ul class="legend">
-					<li class="red-point">Total Contrary Motion Events: <strong>[[${session.totalContraryEvents}]]</strong></li>
-					<li class="blue-point">Total Similar Motion Events: <strong>[[${session.totalSimilarEvents}]]</strong></li>
-					<li class="green-point">Total Oblique Motion Events: <strong>[[${session.totalObliqueEvents}]]</strong></li>
+					<li class="red-point">Total Contrary Motion Events: <strong>[[${session.totalContraryEvents}]]</strong>
+						([[${#numbers.formatDecimal(contraryPercentage,1,2)}]]%)
+					</li>
+					<li class="blue-point">Total Similar Motion Events: <strong>[[${session.totalSimilarEvents}]]</strong>
+						([[${#numbers.formatDecimal(similarPercentage,1,2)}]]%)
+					</li>
+					<li class="green-point">Total Oblique Motion Events: <strong>[[${session.totalObliqueEvents}]]</strong>
+						([[${#numbers.formatDecimal(obliquePercentage,1,2)}]]%)
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -40,7 +52,9 @@
 			</ul>
 		</div>
 		<div class="row text-center mt-1">
-			<h4><a href="/analysis/csv">Download CSV Report</a></h4>
+			<h4>
+				<a href="/analysis/csv">Download CSV Report</a>
+			</h4>
 		</div>
 		<hr>
 		<div id="analysis-uploads" class="row">
