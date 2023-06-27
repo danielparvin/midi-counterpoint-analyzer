@@ -12,14 +12,11 @@ By uploading a ZIP file containing multiple MIDI files, users can analyze many p
 - JFreeChart
 - javax.sound.midi
 
-## Project Status
-In development
-
 ## Ideas for Future Improvements
 - Report on average, median, minimum, and maximum histogram values.
 - Provide fine-grained controls for adding and removing files to and from analyses.
 - Provide a login system and a way for users to store analyses on their account.
 - Provide a way for users to share a stable link to analyses with others.
-
-### To-do List
-- Record a demo video, describing and demonstrating the app, the Bach Inventions case study, and the limitations of the algorithm.
+- Implement a way to fine-tune the counterpoint analysis method to account for ornamentation and slight rhythmic offsets.
+- Include an option to analyze contrapuntal motion based on the main beats of each measure rather than on every note.
+- Consider distinguishing parallel motion from similar motion.
